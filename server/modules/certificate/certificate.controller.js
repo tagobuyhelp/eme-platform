@@ -5,6 +5,7 @@ import {
   buildCertificatePdfByCertificateId,
   generateCertificate,
   getCertificates,
+  getAllCertificates,
   verifyCertificate,
 } from "./certificate.service.js";
 
@@ -100,9 +101,19 @@ export async function downloadCertificateHandler(req, res, next) {
   }
 }
 
+export async function getAllCertificatesHandler(req, res, next) {
+  try {
+    const certificates = await getAllCertificates();
+    return res.json({ certificates });
+  } catch (err) {
+    return next(err);
+  }
+}
+
 export default {
   generateCertificateHandler,
   getMyCertificates,
+  getAllCertificatesHandler,
   verifyCertificateHandler,
   downloadCertificateHandler,
 };

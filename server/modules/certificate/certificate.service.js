@@ -230,6 +230,14 @@ export async function getCertificates(studentId) {
   return Certificate.find({ studentId }).sort({ issuedAt: -1 }).lean();
 }
 
+export async function getAllCertificates() {
+  return Certificate.find()
+    .populate("studentId", "fullName email")
+    .populate("examId", "title course")
+    .sort({ issuedAt: -1 })
+    .lean();
+}
+
 export async function verifyCertificate(certificateId) {
   const cert = await Certificate.findOne({ certificateId }).lean();
   if (!cert) {
