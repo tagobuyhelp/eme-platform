@@ -28,6 +28,15 @@ export async function createResult({ studentId, examId, score, status }) {
 
   const existing = await Result.findOne({ studentId, examId }).lean();
   if (existing) {
+    // Update if the new score is higher
+    if (score > existing.score) {
+      const updated = await Result.findOneAndUpdate(
+        { _id: existing._id },
+        { $set: { score, status } },
+        { new: true }
+      ).lean();
+      return updated;
+    }
     return existing;
   }
 

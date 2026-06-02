@@ -49,6 +49,23 @@ export async function getMyCertificates(req, res, next) {
       return res.status(404).json({ message: "Student profile not found" });
     }
 
+    // Auto-generate missing certificates for passed exams
+    try {
+      const { getStudentResults } = await import("../result/result.service.js");
+      const results = await getStudentResults(student._id);
+      const passedResults = results.filter(r => r.status === "pass");
+      
+      for (const r of passedResults) {
+        const exists = await Certificate.findOne({ studentId: student._id, examId: r.examId }).lean();
+        if (!exists) {
+           console.log(`Auto-generating missing certificate for student ${student._id} and exam ${r.examId}`);
+           await generateCertificate(student._id, r.examId);
+        }
+      }
+    } catch (autoErr) {
+      console.error("Failed to auto-generate missing certificates:", autoErr);
+    }
+
     const certificates = await getCertificates(student._id);
     return res.json({ certificates });
   } catch (err) {
