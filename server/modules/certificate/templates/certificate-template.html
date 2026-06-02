@@ -198,7 +198,7 @@
         width: 50mm;
       }
       .sig-placeholder {
-        height: 12mm;
+        height: 20mm;
         width: 100%;
         margin-bottom: 2mm;
         display: flex;
@@ -315,7 +315,7 @@
         <div class="footer">
           <div class="footer-col sig-col">
             <div class="sig-placeholder">
-              <span class="sig-text">Eme Academy</span>
+              {{signatureHtml}}
             </div>
             <div class="sig-line"></div>
             <p class="sig-title">Training Manager</p>
@@ -324,10 +324,8 @@
           <div class="footer-col logos-container">
             {{msmeLogoHtml}}
             {{isoLogoHtml}}
-            <!-- Gold Badge Placeholder -->
-            <div style="height: 22mm; width: 22mm; border-radius: 50%; background: #eba834; display: flex; align-items:center; justify-content:center; flex-direction: column; border: 1.5px dashed #fff; box-shadow: 0 0 0 1.5px #eba834; color: #fff;">
-              <span style="font-size: 6mm;" class="material-icons">workspace_premium</span>
-            </div>
+            <!-- Gold Badge -->
+            {{goldBadgeHtml}}
           </div>
 
           <div class="footer-col contact-col">
