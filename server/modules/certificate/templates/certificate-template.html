@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EME Academy Certificate</title>
+    <style>
+      @page {
+        size: A4 landscape;
+        margin: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 297mm;
+        height: 210mm;
+        background: #ffffff;
+        color: #1a1a1a;
+        font-family: Arial, sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        overflow: hidden;
+      }
+
+      .certificate-page {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border: 2mm solid #1a4276;
+      }
+
+      /* Corner Shapes */
+      .shape { position: absolute; z-index: 1; pointer-events: none; }
+      
+      .tl-orange { top: 0; left: 0; width: 60mm; height: 40mm; background: #eba834; clip-path: polygon(0 0, 100% 0, 0 100%); }
+      .tl-blue { top: 0; left: 0; width: 50mm; height: 30mm; background: #1a4276; clip-path: polygon(0 0, 100% 0, 0 100%); }
+      
+      .tr-orange { top: 0; right: 0; width: 60mm; height: 40mm; background: #eba834; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+      .tr-blue { top: 0; right: 0; width: 50mm; height: 30mm; background: #1a4276; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+
+      .bl-orange { bottom: 0; left: 0; width: 60mm; height: 40mm; background: #eba834; clip-path: polygon(0 0, 0 100%, 100% 100%); }
+      .bl-blue { bottom: 0; left: 0; width: 50mm; height: 30mm; background: #1a4276; clip-path: polygon(0 100%, 100% 100%, 0 0); }
+
+      .br-orange { bottom: 0; right: 0; width: 60mm; height: 40mm; background: #eba834; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+      .br-blue { bottom: 0; right: 0; width: 50mm; height: 30mm; background: #1a4276; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+
+      /* Watermark */
+      .watermark-container {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        overflow: hidden;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .watermark-grid {
+        position: absolute;
+        width: 200%; height: 200%;
+        top: -50%; left: -50%;
+        transform: rotate(-25deg);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 90mm);
+        grid-gap: 15mm;
+        justify-content: center;
+        align-content: center;
+      }
+      .watermark-grid img {
+        width: 70mm;
+        height: auto;
+        opacity: 0.06;
+      }
+
+      /* Content Area */
+      .content {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10mm;
+      }
+
+      /* Header / Logo */
+      .logo-mark img {
+        height: 22mm;
+        width: auto;
+        max-width: 80mm;
+        object-fit: contain;
+      }
+
+      .registration-pill {
+        background: #eba834;
+        color: #000;
+        border-radius: 50px;
+        padding: 2.5mm 8mm;
+        display: inline-block;
+        text-align: center;
+        font-size: 3.2mm;
+        font-weight: bold;
+        margin: 3mm 0 2mm 0;
+        line-height: 1.4;
+      }
+
+      .cert-no {
+        position: absolute;
+        top: 38mm;
+        right: 15mm;
+        font-family: Arial, sans-serif;
+        font-size: 3.5mm;
+        color: #444;
+        font-weight: bold;
+      }
+
+      /* Titles */
+      .certificate-title {
+        font-family: "Georgia", serif;
+        font-size: 14mm;
+        font-weight: bold;
+        color: #1a1a1a;
+        margin: 4mm 0 1mm 0;
+        letter-spacing: 0.5mm;
+      }
+
+      .certificate-subtitle {
+        font-family: "Arial", sans-serif;
+        font-size: 4.5mm;
+        color: #444;
+        margin: 0 0 5mm 0;
+        letter-spacing: 0.5mm;
+      }
+
+      /* Student Name */
+      .student-name {
+        font-family: "Georgia", serif;
+        font-size: 14mm;
+        font-weight: bold;
+        color: #1a1a1a;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 1.5mm;
+      }
+
+      .name-underline {
+        width: 180mm;
+        border-bottom: 0.8mm solid #333;
+        margin: 1.5mm auto 4mm auto;
+      }
+
+      /* Course Info */
+      .description {
+        font-family: "Arial", sans-serif;
+        font-size: 4.5mm;
+        color: #333;
+        letter-spacing: 0.5mm;
+        margin: 0 0 3mm 0;
+      }
+
+      .course-name {
+        font-family: "Arial", sans-serif;
+        font-size: 8mm;
+        font-weight: bold;
+        color: #1a1a1a;
+        text-transform: uppercase;
+        margin: 0 0 5mm 0;
+        letter-spacing: 0.5mm;
+      }
+
+      .date-location {
+        font-family: "Georgia", serif;
+        font-size: 4.5mm;
+        font-weight: bold;
+        color: #1a1a1a;
+        margin: 0;
+        line-height: 1.4;
+        text-align: center;
+      }
+
+      /* Footer */
+      .footer {
+        position: absolute;
+        bottom: 15mm;
+        left: 15mm;
+        right: 15mm;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        z-index: 2;
+      }
+
+      .sig-col {
+        text-align: center;
+        width: 50mm;
+      }
+      .sig-placeholder {
+        height: 12mm;
+        width: 100%;
+        margin-bottom: 2mm;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      /* Simulated signature script */
+      .sig-text {
+        font-family: "Brush Script MT", cursive, "Georgia", serif;
+        font-size: 7mm;
+        color: #1a4276;
+        transform: rotate(-5deg);
+      }
+      .sig-line {
+        border-bottom: 0.6mm solid #000;
+        margin-bottom: 2mm;
+      }
+      .sig-title {
+        font-weight: bold;
+        font-size: 3.5mm;
+        margin: 0;
+        font-family: "Arial", sans-serif;
+      }
+
+      .logos-container {
+        display: flex;
+        gap: 5mm;
+        align-items: center;
+      }
+
+      /* Logo Placeholders for MSME/ISO */
+      .placeholder-box {
+        border: 1px dashed #999;
+        background: #f8f9fa;
+        color: #666;
+        font-size: 2.5mm;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .contact-col {
+        text-align: right;
+        font-size: 3.5mm;
+        font-weight: bold;
+        line-height: 1.5;
+        font-family: "Arial", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="certificate-page">
+      <!-- Background Watermarks -->
+      <div class="watermark-container">
+        <div class="watermark-grid">
+          <img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" />
+          <img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" />
+          <img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" />
+          <img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" />
+          <img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" />
+          <img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" />
+          <img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" /><img src="{{logoBase64}}" />
+        </div>
+      </div>
+
+      <!-- Corners -->
+      <div class="shape tl-orange"></div>
+      <div class="shape tl-blue"></div>
+      
+      <div class="shape tr-orange"></div>
+      <div class="shape tr-blue"></div>
+      
+      <div class="shape bl-orange"></div>
+      <div class="shape bl-blue"></div>
+      
+      <div class="shape br-orange"></div>
+      <div class="shape br-blue"></div>
+
+      <!-- Main Content -->
+      <div class="content">
+        <div class="logo-mark">
+          <img src="{{logoBase64}}" alt="EME Academy" />
+        </div>
+
+        <div class="registration-pill">
+          A Unit Of EME Academy Education &amp; Welfare Trust<br/>
+          Registration No. IV-1627/22
+        </div>
+
+        <div class="cert-no" style="text-align: center;">
+          <img src="{{verifyQrUrl}}" alt="Verify" style="width: 16mm; height: 16mm; margin-bottom: 1.5mm; mix-blend-mode: multiply;" /><br/>
+          Cert.No: {{certificateId}}
+        </div>
+
+        <h1 class="certificate-title">Certificate Of Completion</h1>
+        <p class="certificate-subtitle">This certificate is awarded to</p>
+
+        <h2 class="student-name">
+          {{studentPhotoHtml}}
+          {{studentName}}
+        </h2>
+        <div class="name-underline"></div>
+
+        <p class="description">For Successful Completion of Training Programme on</p>
+        <h3 class="course-name">{{courseName}}</h3>
+
+        <p class="date-location">
+          {{date}}<br/>
+          Kolkata
+        </p>
+
+        <div class="footer">
+          <div class="footer-col sig-col">
+            <div class="sig-placeholder">
+              <span class="sig-text">Eme Academy</span>
+            </div>
+            <div class="sig-line"></div>
+            <p class="sig-title">Training Manager</p>
+          </div>
+          
+          <div class="footer-col logos-container">
+            {{msmeLogoHtml}}
+            {{isoLogoHtml}}
+            <!-- Gold Badge Placeholder -->
+            <div style="height: 22mm; width: 22mm; border-radius: 50%; background: #eba834; display: flex; align-items:center; justify-content:center; flex-direction: column; border: 1.5px dashed #fff; box-shadow: 0 0 0 1.5px #eba834; color: #fff;">
+              <span style="font-size: 6mm;" class="material-icons">workspace_premium</span>
+            </div>
+          </div>
+
+          <div class="footer-col contact-col">
+            <p style="margin:0 0 1mm 0;">www.emeacademy.co.in</p>
+            <p style="margin:0;">email-info@emeacademy.co.in</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>

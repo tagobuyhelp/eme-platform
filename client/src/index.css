@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: theme("fontFamily.body");
+  }
+
+  body {
+    @apply bg-background text-textPrimary transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-gray-900 text-gray-100;
+  }
+
+  #root {
+    @apply min-h-screen w-full bg-background dark:bg-gray-900;
+  }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: theme("fontFamily.heading");
+}
+}
+
+@layer components {
+/* 🔲 Card */
+.card {
+@apply bg-surface rounded-xl border border-border p-5 shadow-sm transition-all duration-200 hover:shadow-md;
+}
+
+.dark .card {
+@apply bg-gray-800 border-gray-700;
+}
+
+/* 🔘 Buttons */
+.btn-primary {
+@apply bg-primary text-white px-4 py-2 rounded-lg font-semibold transition-all
+hover:bg-secondary active:scale-[0.98]
+disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-accent {
+@apply bg-accent text-white px-4 py-2 rounded-lg font-semibold transition-all
+hover:opacity-90 active:scale-[0.98]
+disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* 🧾 Input */
+.input {
+@apply border border-border px-4 py-3 rounded-xl bg-surface text-sm outline-none
+transition-all duration-200
+focus:border-accent focus:ring-4 focus:ring-accent/10;
+}
+
+.dark .input {
+@apply bg-gray-800 border-gray-700 text-gray-100;
+}
+
+/* 📱 Layout */
+.bg-app {
+@apply bg-background min-h-screen transition-colors duration-300;
+}
+
+.dark .bg-app {
+@apply bg-gray-900;
+}
+
+.sidebar {
+    @apply bg-surface border-r border-border min-h-screen transition-all duration-300;
+  }
+
+.content {
+@apply p-6 bg-background;
+}
+
+.dark .content {
+@apply bg-gray-900;
+}
+}
+
+@layer utilities {
+/* 🎯 Material Icons */
+.material-icons {
+font-size: 20px;
+line-height: 1;
+}
+
+/* 🚫 Scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+display: none;
+}
+
+.no-scrollbar {
+-ms-overflow-style: none;
+scrollbar-width: none;
+}
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable-id-card, .printable-id-card * {
+    visibility: visible !important;
+  }
+  .printable-id-card {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 320px !important;
+    height: max-content !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}

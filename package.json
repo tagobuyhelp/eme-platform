@@ -1,0 +1,27 @@
+{
+  "name": "eme-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server/server.js",
+    "client": "npm run dev --prefix client"
+  },
+  "keywords": [
+    "eme-platform",
+    "learning-platform",
+    "student-portal",
+    "exams",
+    "results",
+    "certifications",
+    "career-progress"
+  ],
+  "author": "Tarik Aziz - Senior Software Engineer (EME)",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
