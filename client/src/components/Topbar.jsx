@@ -34,7 +34,7 @@ function Topbar({ role, toggleSidebar, toggleMobileDrawer, theme, toggleTheme, p
 
   useEffect(() => {
     if (role === "admin") {
-      const socket = io("http://localhost:5000");
+      const socket = io(import.meta.env.VITE_SOCKET_URL || "/");
 
       socket.on("connect", () => {
         socket.emit("join_admin");

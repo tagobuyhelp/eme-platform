@@ -52,7 +52,7 @@ function Certificates() {
               URL
             </a>
           ) : null}
-          <a href={`http://localhost:5000/api/certificates/download/${row.certificateId}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
+          <a href={`${import.meta.env.VITE_API_URL || '/api'}/certificates/download/${row.certificateId}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
             <span className="material-icons text-[14px]">download</span>
             PDF
           </a>

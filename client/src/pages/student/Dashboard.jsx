@@ -287,7 +287,7 @@ function Dashboard() {
 
                 <div className="mt-8 grid gap-3">
                   <a
-                    href={latestCertificate.certificateUrl || `http://localhost:5000/api/certificates/download/${latestCertificate.certificateId}`}
+                    href={latestCertificate.certificateUrl || `${import.meta.env.VITE_API_URL || '/api'}/certificates/download/${latestCertificate.certificateId}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-sm font-bold text-white hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all active:scale-[0.98]"

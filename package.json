@@ -7,7 +7,10 @@
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon server/server.js",
-    "client": "npm run dev --prefix client"
+    "client": "npm run dev --prefix client",
+    "start": "node server/server.js",
+    "build": "npm install --prefix client --include=dev && npm run build --prefix client",
+    "postinstall": "npm install --prefix server && npm install --prefix client --include=dev && npm run build --prefix client"
   },
   "keywords": [
     "eme-platform",
