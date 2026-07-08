@@ -1,4 +1,4 @@
-import { loginUser, registerUser } from "./auth.service.js";
+import { loginUser, registerUser, sendPhoneOtp, verifyPhoneOtp } from "./auth.service.js";
 
 export async function register(req, res, next) {
   try {
@@ -42,10 +42,39 @@ export async function changePassword(req, res, next) {
   }
 }
 
+// ─── OTP Endpoints ───────────────────────────────────────────────────
+
+export async function sendOtp(req, res, next) {
+  try {
+    const { phone } = req.body;
+    if (!phone) {
+      return res.status(400).json({ message: "Phone number is required" });
+    }
+    const result = await sendPhoneOtp(phone);
+    return res.json(result);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function verifyOtp(req, res, next) {
+  try {
+    const { phone, otp, name } = req.body;
+    if (!phone || !otp) {
+      return res.status(400).json({ message: "Phone number and OTP are required" });
+    }
+    const result = await verifyPhoneOtp(phone, otp, name);
+    return res.json(result);
+  } catch (err) {
+    return next(err);
+  }
+}
+
 export default {
   register,
   login,
   updateMe,
   changePassword,
+  sendOtp,
+  verifyOtp,
 };
-

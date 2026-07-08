@@ -22,9 +22,9 @@ const studentSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            required: true,
             trim: true,
             lowercase: true,
+            default: "",
         },
         phone: {
             type: String,

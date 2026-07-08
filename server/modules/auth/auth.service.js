@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import User from "./auth.model.js";
+import { createOtp, verifyOtp } from "./otp.store.js";
+import { sendOtpSms } from "./sms.service.js";
 
 function createHttpError(statusCode, message) {
   const err = new Error(message);
@@ -58,6 +60,8 @@ export async function ensureDefaultUsers() {
   return created;
 }
 
+// ─── Admin: email + password registration ────────────────────────────
+
 export async function registerUser(data) {
   const name = data?.name;
   const email = data?.email;
@@ -86,6 +90,8 @@ export async function registerUser(data) {
   return user;
 }
 
+// ─── Admin: email + password login ───────────────────────────────────
+
 export async function loginUser(data) {
   const email = data?.email;
   const password = data?.password;
@@ -113,6 +119,84 @@ export async function loginUser(data) {
 
   return { token, user: safeUser };
 }
+
+// ─── Student: Phone + OTP ────────────────────────────────────────────
+
+function normalizePhone(phone) {
+  const cleaned = String(phone || "").replace(/\D/g, "");
+  // Support +91XXXXXXXXXX or 91XXXXXXXXXX or XXXXXXXXXX
+  if (cleaned.length === 12 && cleaned.startsWith("91")) {
+    return cleaned.slice(2);
+  }
+  if (cleaned.length === 10) {
+    return cleaned;
+  }
+  throw createHttpError(400, "Please enter a valid 10-digit mobile number");
+}
+
+/**
+ * Send OTP to a phone number.
+ * Creates an OTP, stores it, and sends via SMS.
+ */
+export async function sendPhoneOtp(phone) {
+  const normalizedPhone = normalizePhone(phone);
+
+  const { otp } = createOtp(normalizedPhone);
+  await sendOtpSms(normalizedPhone, otp);
+
+  return { phone: normalizedPhone, message: "OTP sent successfully" };
+}
+
+/**
+ * Verify OTP and login/register the student.
+ * - If user exists with this phone → login
+ * - If user doesn't exist → register with provided name
+ */
+export async function verifyPhoneOtp(phone, otp, name) {
+  const normalizedPhone = normalizePhone(phone);
+
+  // Verify the OTP (throws on failure)
+  verifyOtp(normalizedPhone, otp);
+
+  // Check if user already exists
+  let user = await User.findOne({ phone: normalizedPhone });
+
+  if (user) {
+    // Existing user — login
+    const token = signToken({ id: user._id.toString(), role: user.role });
+    return { token, user: user.toObject(), isNewUser: false };
+  }
+
+  // New user — register
+  if (!name || !String(name).trim()) {
+    throw createHttpError(400, "Full name is required for new registration");
+  }
+
+  user = await User.create({
+    name: String(name).trim(),
+    phone: normalizedPhone,
+    role: "student",
+  });
+
+  // Also create a Student profile linked to this user
+  const { default: Student } = await import("../student/student.model.js");
+  try {
+    await Student.create({
+      userId: user._id,
+      fullName: String(name).trim(),
+      email: "",
+      phone: normalizedPhone,
+      status: "pending",
+    });
+  } catch (profileErr) {
+    console.warn("Failed to auto-create student profile:", profileErr.message);
+  }
+
+  const token = signToken({ id: user._id.toString(), role: user.role });
+  return { token, user: user.toObject(), isNewUser: true };
+}
+
+// ─── Profile Management ─────────────────────────────────────────────
 
 export async function updateProfile(userId, data) {
   const user = await User.findById(userId);
@@ -146,6 +230,8 @@ export async function updatePassword(userId, currentPassword, newPassword) {
 export default {
   registerUser,
   loginUser,
+  sendPhoneOtp,
+  verifyPhoneOtp,
   updateProfile,
   updatePassword,
 };
