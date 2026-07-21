@@ -1,4 +1,4 @@
-import { loginUser, registerUser, sendPhoneOtp, verifyPhoneOtp } from "./auth.service.js";
+import { loginUser, registerUser, sendPhoneOtp, verifyPhoneOtp, verifyMsg91WidgetToken } from "./auth.service.js";
 
 export async function register(req, res, next) {
   try {
@@ -70,6 +70,19 @@ export async function verifyOtp(req, res, next) {
   }
 }
 
+export async function verifyWidget(req, res, next) {
+  try {
+    const { accessToken, name } = req.body;
+    if (!accessToken) {
+      return res.status(400).json({ message: "Access token is required" });
+    }
+    const result = await verifyMsg91WidgetToken(accessToken, name);
+    return res.json(result);
+  } catch (err) {
+    return next(err);
+  }
+}
+
 export default {
   register,
   login,
@@ -77,4 +90,5 @@ export default {
   changePassword,
   sendOtp,
   verifyOtp,
+  verifyWidget,
 };

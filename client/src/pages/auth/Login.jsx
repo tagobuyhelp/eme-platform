@@ -94,12 +94,81 @@ function Login({ defaultRole = "student" }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const verifyingTokenRef = useRef(null);
+
+  // MSG91 Widget config
+  const widgetId = import.meta.env.VITE_MSG91_WIDGET_ID || "366775666e43353731323737";
+  const tokenAuth = import.meta.env.VITE_MSG91_TOKEN_AUTH || "552193T4mXyWC8Uc6a5f0f48P1";
+  const isMsg91WidgetConfigured = Boolean(widgetId && widgetId !== "your_widget_id_here");
+
   // Cooldown timer
   useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setInterval(() => setCooldown((c) => (c <= 1 ? 0 : c - 1)), 1000);
     return () => clearInterval(timer);
   }, [cooldown]);
+
+  // Handle MSG91 Widget verification success callback
+  const handleMsg91WidgetSuccess = useCallback(async (accessToken) => {
+    if (!accessToken || verifyingTokenRef.current === accessToken) {
+      return;
+    }
+    verifyingTokenRef.current = accessToken;
+
+    try {
+      setLoading(true);
+      setError("");
+      const res = await api.post("/auth/verify-widget", {
+        accessToken,
+        name: fullName.trim() || undefined,
+      });
+      setStoredAuth({ token: res.data.token, user: res.data.user });
+      navigate("/student/dashboard", { replace: true });
+    } catch (err) {
+      verifyingTokenRef.current = null;
+      setError(err.response?.data?.message || "MSG91 Widget token verification failed");
+    } finally {
+      setLoading(false);
+    }
+  }, [fullName, navigate]);
+
+  // Load MSG91 Widget script and initialize configuration
+  useEffect(() => {
+    if (!isMsg91WidgetConfigured || isAdmin) return;
+
+    window.configuration = {
+      widgetId: widgetId,
+      tokenAuth: tokenAuth,
+      exposeMethods: true,
+      success: (data) => {
+        const token = typeof data === "string" ? data : (data?.message || data?.["access-token"] || data?.accessToken);
+        if (token) {
+          handleMsg91WidgetSuccess(token);
+        }
+      },
+      failure: (err) => {
+        const errMsg = typeof err === "string" ? err : (err?.message || err?.reason || "MSG91 OTP verification failed");
+        setError(errMsg);
+        setLoading(false);
+      },
+    };
+
+    const existingScript = document.getElementById("msg91-otp-script");
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.id = "msg91-otp-script";
+      script.src = "https://verify.msg91.com/otp-provider.js";
+      script.async = true;
+      script.onload = () => {
+        if (typeof window.initSendOTP === "function") {
+          window.initSendOTP(window.configuration);
+        }
+      };
+      document.body.appendChild(script);
+    } else if (typeof window.initSendOTP === "function") {
+      window.initSendOTP(window.configuration);
+    }
+  }, [isMsg91WidgetConfigured, isAdmin, widgetId, tokenAuth, handleMsg91WidgetSuccess]);
 
   // ─── Admin Login ───────────────────────────────
   const handleAdminLogin = async (e) => {
@@ -125,9 +194,37 @@ function Login({ defaultRole = "student" }) {
       setError("Please enter a valid 10-digit mobile number");
       return;
     }
+
+    setLoading(true);
+    setError("");
+    verifyingTokenRef.current = null;
+
+    // If MSG91 Widget script is loaded & exposed
+    if (isMsg91WidgetConfigured && typeof window.sendOtp === "function") {
+      try {
+        window.sendOtp(
+          "91" + cleanPhone,
+          () => {
+            setLoading(false);
+            setStep("otp");
+            setCooldown(60);
+            setSuccess("OTP sent to +91 " + cleanPhone);
+          },
+          (err) => {
+            setLoading(false);
+            const msg = typeof err === "string" ? err : (err?.message || err?.reason || "Failed to send OTP via MSG91");
+            setError(msg);
+          }
+        );
+      } catch (widgetErr) {
+        setLoading(false);
+        setError("Widget error: " + widgetErr.message);
+      }
+      return;
+    }
+
+    // Fallback if widget script is still loading or not configured
     try {
-      setLoading(true);
-      setError("");
       await api.post("/auth/send-otp", { phone: cleanPhone });
       setStep("otp");
       setOtp("");
@@ -138,19 +235,47 @@ function Login({ defaultRole = "student" }) {
     } finally {
       setLoading(false);
     }
-  }, [phone]);
+  }, [phone, isMsg91WidgetConfigured]);
 
   // ─── Student: Verify OTP ──────────────────────
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     const cleanOtp = otp.replace(/\D/g, "");
+
     if (cleanOtp.length !== 6) {
       setError("Please enter the complete 6-digit OTP");
       return;
     }
+
+    setLoading(true);
+    setError("");
+
+    // If MSG91 Widget exposed method is available
+    if (isMsg91WidgetConfigured && typeof window.verifyOtp === "function") {
+      try {
+        window.verifyOtp(
+          cleanOtp,
+          (res) => {
+            const token = typeof res === "string" ? res : (res?.message || res?.["access-token"] || res?.accessToken);
+            if (token) {
+              handleMsg91WidgetSuccess(token);
+            }
+          },
+          (err) => {
+            setLoading(false);
+            const msg = typeof err === "string" ? err : (err?.message || err?.reason || "Invalid OTP code");
+            setError(msg);
+          }
+        );
+      } catch (err) {
+        setLoading(false);
+        setError("Verification error: " + err.message);
+      }
+      return;
+    }
+
+    // Standard API fallback
     try {
-      setLoading(true);
-      setError("");
       const res = await api.post("/auth/verify-otp", {
         phone: phone.replace(/\D/g, ""),
         otp: cleanOtp,
@@ -194,8 +319,8 @@ function Login({ defaultRole = "student" }) {
                 <span className="material-icons text-white">phone_android</span>
               </div>
               <div>
-                <p className="text-sm font-bold text-white">Quick OTP Login</p>
-                <p className="text-xs text-indigo-100">No password needed — just your phone</p>
+                <p className="text-sm font-bold text-white">MSG91 OTP Verification</p>
+                <p className="text-xs text-indigo-100">Fast & secure OTP login powered by MSG91</p>
               </div>
             </div>
 

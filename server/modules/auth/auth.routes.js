@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { login, register, updateMe, changePassword, sendOtp, verifyOtp } from "./auth.controller.js";
+import { login, register, updateMe, changePassword, sendOtp, verifyOtp, verifyWidget } from "./auth.controller.js";
 import protect from "../../core/middleware/authMiddleware.js";
 
 const router = Router();
@@ -12,6 +12,7 @@ router.post("/login", login);
 // Student: phone + OTP
 router.post("/send-otp", sendOtp);
 router.post("/verify-otp", verifyOtp);
+router.post("/verify-widget", verifyWidget);
 
 // Profile management (protected)
 router.put("/me", protect, updateMe);
