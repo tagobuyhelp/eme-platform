@@ -9,6 +9,13 @@ export default {
         secondary: "#2E7BB3",
         accent: "#26C1D3",
 
+        "eme-navy": "#143674",
+        "eme-blue": "#2E7BB3",
+        "eme-cyan": "#26C1D3",
+        "eme-orange": "#FF6B00",
+        "eme-orange-hover": "#E66000",
+        "eme-dark": "#0B1E40",
+
         // UI Colors
         background: "#F5F7FA",
         surface: "#FFFFFF",

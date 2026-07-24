@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Loader from "../../components/Loader";
 import ErrorAlert from "../../components/ErrorAlert";
+import ExamCard from "../../components/ExamCard";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [student, setStudent] = useState(null);
+  const [studentProfile, setStudentProfile] = useState(null);
   const [exams, setExams] = useState([]);
   const [results, setResults] = useState([]);
   const [certificates, setCertificates] = useState([]);
@@ -18,15 +21,17 @@ function Dashboard() {
         setLoading(true);
         setError("");
 
-        const [examsResponse, resultsResponse, certificatesResponse] = await Promise.all([
+        const [examsResponse, resultsResponse, certificatesResponse, profileResponse] = await Promise.all([
           api.get("/exams"),
           api.get("/results/my"),
           api.get("/certificates/my"),
+          api.get("/students/me").catch(() => ({ data: { student: null } })),
         ]);
 
         setExams(examsResponse.data.exams || []);
         setResults(resultsResponse.data.results || []);
         setCertificates(certificatesResponse.data.certificates || []);
+        setStudentProfile(profileResponse.data.student || null);
 
         const storedUser = JSON.parse(localStorage.getItem("user") || "null");
         setStudent(storedUser);
@@ -86,61 +91,97 @@ function Dashboard() {
 
   return (
     <div className="w-full space-y-6 md:space-y-10 pb-6 md:pb-10">
-      {/* 1. Modern Deep Slate Welcome Banner */}
+      {/* 1. Official EME Brand Glassmorphism Welcome Banner */}
       <section 
-        className="relative overflow-hidden rounded-3xl md:rounded-[2rem] bg-cover bg-center p-5 md:p-10 text-white shadow-2xl shadow-indigo-500/20 isolate transition-all duration-1000 ease-in-out"
-        style={{ backgroundImage: `url('${bgImages[currentBg]}')` }}
+        className="relative overflow-hidden rounded-3xl md:rounded-[2.5rem] bg-eme-dark p-5 md:p-8 text-white shadow-2xl shadow-eme-navy/40 isolate transition-all duration-1000 ease-in-out border border-eme-blue/30"
       >
-        <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"></div>
-        <div className="absolute -right-10 -top-20 h-96 w-96 rounded-full bg-indigo-500 opacity-30 mix-blend-screen blur-[80px] pointer-events-none"></div>
-        <div className="absolute -bottom-32 left-10 h-80 w-80 rounded-full bg-cyan-500 opacity-20 mix-blend-screen blur-[60px] pointer-events-none"></div>
+        {/* Dynamic Background Image with EME Dark Blue Gradient Blur */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000 scale-105 opacity-30"
+          style={{ backgroundImage: `url('${bgImages[currentBg]}')` }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-eme-dark/95 via-eme-navy/90 to-eme-dark/95 backdrop-blur-md"></div>
         
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-60 mask-image:linear-gradient(to_bottom,white,transparent) pointer-events-none"></div>
+        {/* EME Ambient Brand Glow Orbs */}
+        <div className="absolute -right-12 -top-24 h-80 w-80 rounded-full bg-eme-cyan/25 blur-[90px] pointer-events-none"></div>
+        <div className="absolute -bottom-24 -left-12 h-80 w-80 rounded-full bg-eme-blue/20 blur-[90px] pointer-events-none"></div>
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
-          <div className="max-w-2xl">
-            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-indigo-400 drop-shadow-sm mb-2 md:mb-3">Welcome Back</p>
-            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-md">
-              Hello, {student?.name || "Student"}
-            </h1>
-            <p className="mt-3 md:mt-4 text-base md:text-lg text-slate-300 font-medium leading-relaxed max-w-xl opacity-90">
-              Continue your learning journey, conquer assessments, and build your professional portfolio.
-            </p>
-            <div className="mt-6 md:mt-8 flex gap-4">
-              <Link to="/student/exams" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-slate-100 hover:shadow-lg hover:-translate-y-0.5">
-                Take an Exam
-                <span className="material-icons text-sm">arrow_forward</span>
-              </Link>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 max-w-3xl">
+            {/* Avatar with EME Cyan Glow Ring */}
+            <div className="h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-2xl bg-gradient-to-br from-eme-blue/40 to-eme-cyan/40 border-2 border-white/20 shadow-xl flex items-center justify-center text-white text-2xl sm:text-3xl font-extrabold overflow-hidden ring-4 ring-eme-cyan/30">
+              {studentProfile?.profilePhoto ? (
+                <img src={studentProfile.profilePhoto} alt={studentProfile.fullName} className="h-full w-full object-cover" />
+              ) : (
+                (studentProfile?.fullName || student?.name || "S").charAt(0).toUpperCase()
+              )}
+            </div>
+
+            <div className="space-y-2">
+              {/* EME Badges Pill Row */}
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-eme-blue/40 text-cyan-200 border border-eme-cyan/40 backdrop-blur-md shadow-sm flex items-center gap-1">
+                  <span className="material-icons text-[13px]">badge</span>
+                  {studentProfile?.studentId || "EME STUDENT"}
+                </span>
+                <span className="px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-eme-orange/20 text-eme-orange border border-eme-orange/40 backdrop-blur-md shadow-sm flex items-center gap-1">
+                  <span className="material-icons text-[13px]">school</span>
+                  {studentProfile?.course || "GENERAL COURSE"}
+                </span>
+                {studentProfile?.phone && (
+                  <span className="px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold bg-white/10 text-slate-200 border border-white/15 backdrop-blur-md flex items-center gap-1">
+                    <span className="material-icons text-[13px]">phone_android</span>
+                    +91 {studentProfile.phone}
+                  </span>
+                )}
+              </div>
+
+              <h1 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white drop-shadow-md">
+                {studentProfile?.fullName || student?.name || "Student"}
+              </h1>
+              <p className="text-xs sm:text-sm md:text-base text-slate-200/90 font-medium leading-relaxed max-w-xl">
+                Enrolled Course: <strong className="text-eme-orange font-extrabold">{studentProfile?.course || "General Assessment"}</strong>. Assessment dashboard ready.
+              </p>
             </div>
           </div>
-          <div className="hidden lg:block">
-            <div className="h-40 w-40 relative flex items-center justify-center">
-              <div className="absolute inset-0 bg-white/5 rounded-[2.5rem] rotate-6 backdrop-blur-sm border border-white/10 transition-transform duration-700 hover:rotate-12"></div>
-              <div className="absolute inset-0 bg-white/10 rounded-[2.5rem] -rotate-3 backdrop-blur-md border border-white/20 transition-transform duration-700 hover:-rotate-6"></div>
-              <span className="material-icons text-white text-7xl relative z-10 drop-shadow-lg">school</span>
-            </div>
+
+          <div className="shrink-0">
+            <Link 
+              to="/student/exams" 
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-eme-orange via-orange-500 to-eme-orange-hover hover:from-eme-orange-hover hover:to-eme-orange text-white font-black py-3.5 px-6 shadow-xl shadow-eme-orange/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <span className="material-icons text-white text-lg">play_circle</span>
+              Start Exam Now
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* 2. Modern Minimalist Stat Cards */}
+      {/* 2. EME Branded Stat Cards */}
       <section className="grid grid-cols-1 gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[
-          { label: "Available Exams", value: stats.totalExams, icon: "library_books", color: "text-indigo-600", bg: "bg-indigo-50" },
-          { label: "Exams Completed", value: stats.completedExams, icon: "task_alt", color: "text-violet-600", bg: "bg-violet-50" },
-          { label: "Certificates Earned", value: stats.certificatesEarned, icon: "verified", color: "text-emerald-600", bg: "bg-emerald-50" }
+          { label: "Available Exams", value: stats.totalExams, subtext: "Ready to launch", icon: "quiz", gradient: "from-eme-navy to-eme-blue", dotColor: "bg-eme-cyan" },
+          { label: "Exams Completed", value: stats.completedExams, subtext: "Passed assessments", icon: "task_alt", gradient: "from-eme-blue to-eme-cyan", dotColor: "bg-eme-blue" },
+          { label: "Certificates Earned", value: stats.certificatesEarned, subtext: "Verified credentials", icon: "workspace_premium", gradient: "from-emerald-600 to-teal-500", dotColor: "bg-emerald-500" }
         ].map((stat, idx) => (
-          <div key={idx} className="group relative overflow-hidden rounded-2xl md:rounded-3xl bg-white p-5 md:p-6 border border-slate-200/80 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-slate-200">
-            <div className="flex items-start justify-between">
+          <div 
+            key={idx} 
+            className="group relative overflow-hidden rounded-2xl md:rounded-3xl bg-white dark:bg-slate-900 p-5 md:p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-eme-navy/10 hover:border-eme-blue/40"
+          >
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 mb-1 md:mb-2">{stat.label}</p>
-                <p className="font-heading text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">{stat.value}</p>
+                <p className="text-[10px] md:text-xs font-extrabold uppercase tracking-widest text-slate-400 mb-1">{stat.label}</p>
+                <p className="font-heading text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">{stat.value}</p>
+                <p className="text-[11px] font-semibold text-slate-500 mt-1 flex items-center gap-1">
+                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${stat.dotColor}`}></span>
+                  {stat.subtext}
+                </p>
               </div>
-              <div className={`h-14 w-14 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6 ${stat.bg} ${stat.color}`}>
+              <div className={`h-14 w-14 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-eme-navy/20 bg-gradient-to-br ${stat.gradient} transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6`}>
                 <span className="material-icons text-3xl">{stat.icon}</span>
               </div>
             </div>
-            <div className={`absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r ${idx === 0 ? 'from-indigo-500 to-indigo-400' : idx === 1 ? 'from-violet-500 to-violet-400' : 'from-emerald-500 to-emerald-400'} transition-all duration-500 group-hover:w-full`}></div>
+            <div className={`absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r ${stat.gradient} transition-all duration-500 group-hover:w-full`}></div>
           </div>
         ))}
       </section>
@@ -202,6 +243,45 @@ function Dashboard() {
                 </div>
               </div>
             </div>
+          </article>
+
+          {/* Assigned Course Exams & Start Test Section */}
+          <article className="rounded-2xl md:rounded-3xl bg-white p-5 md:p-8 shadow-sm border border-slate-200/80">
+            <div className="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Assigned Assessments</span>
+                <h2 className="font-heading text-lg md:text-2xl font-extrabold text-slate-900">Your Course Exams</h2>
+              </div>
+              <Link to="/student/exams" className="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1">
+                View All ({exams.length}) <span className="material-icons text-sm">arrow_forward</span>
+              </Link>
+            </div>
+
+            {exams.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4">
+                {exams.slice(0, 3).map((exam) => {
+                  const examResults = results.filter((r) => r.examId === exam._id);
+                  const hasPassed = examResults.some((r) => r.status === "pass");
+                  const attemptsCount = examResults.length;
+
+                  return (
+                    <ExamCard
+                      key={exam._id}
+                      exam={exam}
+                      attemptsCount={attemptsCount}
+                      hasPassed={hasPassed}
+                      onStart={(id) => navigate(`/student/exam/${id}`)}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="p-8 rounded-2xl bg-slate-50 text-center border border-dashed border-slate-200">
+                <span className="material-icons text-4xl text-slate-300">assignment_late</span>
+                <p className="mt-2 text-sm font-semibold text-slate-600">No exams published for your course program yet.</p>
+                <p className="text-xs text-slate-400 mt-1">Check back soon or contact your admin for exam schedules.</p>
+              </div>
+            )}
           </article>
 
           {/* Performance Timeline */}

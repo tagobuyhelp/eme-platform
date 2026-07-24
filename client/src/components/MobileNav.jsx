@@ -19,8 +19,8 @@ function MobileNav({ role, onMenuClick }) {
   const items = role === "admin" ? adminNavItems : studentNavItems;
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-40 pb-safe shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
-      <div className="flex justify-around items-center h-16">
+    <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200/80 dark:border-slate-800/80 z-40 pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
+      <div className="flex justify-around items-center h-16 relative">
         {items.map((item, idx) => {
           if (item.isMenu) {
             return (
@@ -30,7 +30,7 @@ function MobileNav({ role, onMenuClick }) {
                 className="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600 transition-colors"
               >
                 <span className="material-icons text-xl">{item.icon}</span>
-                <span className="text-[10px] font-bold mt-0.5">{item.label}</span>
+                <span className="text-[10px] font-extrabold mt-0.5">{item.label}</span>
               </button>
             );
           }
@@ -40,17 +40,20 @@ function MobileNav({ role, onMenuClick }) {
               key={idx}
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center justify-center w-full h-full transition-colors ${
-                  isActive ? "text-indigo-600" : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                `relative flex flex-col items-center justify-center w-full h-full transition-all duration-200 ${
+                  isActive ? "text-eme-orange dark:text-eme-orange" : "text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200"
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <div className="relative flex items-center justify-center">
-                     <span className={`material-icons text-xl transition-transform ${isActive ? "scale-110 drop-shadow-md" : ""}`}>{item.icon}</span>
+                  {isActive && (
+                    <span className="absolute top-0 h-1 w-8 rounded-b-full bg-eme-orange shadow-sm shadow-eme-orange/50"></span>
+                  )}
+                  <div className={`relative flex items-center justify-center transition-transform duration-200 ${isActive ? "-translate-y-0.5" : ""}`}>
+                     <span className={`material-icons text-2xl transition-transform ${isActive ? "scale-110 drop-shadow-md text-eme-orange" : ""}`}>{item.icon}</span>
                   </div>
-                  <span className={`text-[10px] mt-0.5 ${isActive ? "font-bold" : "font-medium"}`}>{item.label}</span>
+                  <span className={`text-[10px] tracking-tight mt-0.5 ${isActive ? "font-black" : "font-semibold"}`}>{item.label}</span>
                 </>
               )}
             </NavLink>
