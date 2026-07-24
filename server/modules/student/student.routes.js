@@ -11,6 +11,7 @@ import {
   updateStudentProfile,
   uploadDocument,
   previewDocument,
+  importExcelCandidates,
 } from "./student.controller.js";
 
 import multer from "multer";
@@ -32,12 +33,14 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
+const memoryUpload = multer({ storage: multer.memoryStorage() });
 
 const router = Router();
 
 router.post("/", protect, authorize("admin", "student"), createStudentProfile);
 router.get("/", protect, authorize("admin"), listStudents);
 router.get("/me", protect, authorize("student"), getMe);
+router.post("/import-excel", protect, authorize("admin"), memoryUpload.single("file"), importExcelCandidates);
 router.post("/upload", protect, authorize("student", "admin"), upload.single("document"), uploadDocument);
 router.get("/preview", previewDocument);
 router.get("/:id", protect, authorize("admin", "student"), getStudent);

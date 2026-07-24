@@ -136,10 +136,19 @@ function normalizePhone(phone) {
 
 /**
  * Send OTP to a phone number.
- * Creates an OTP, stores it, and sends via SMS.
+ * Checks if the candidate mobile number exists in DB first.
  */
 export async function sendPhoneOtp(phone) {
   const normalizedPhone = normalizePhone(phone);
+
+  // Candidate DB Whitelist Check
+  const existingUser = await User.findOne({ phone: normalizedPhone });
+  if (!existingUser) {
+    throw createHttpError(
+      404,
+      "আপনার মোবাইল নম্বরটি ক্যান্ডিডেট তালিকায় পাওয়া যায়নি। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।"
+    );
+  }
 
   const { otp } = createOtp(normalizedPhone);
   await sendOtpSms(normalizedPhone, otp);
@@ -148,58 +157,47 @@ export async function sendPhoneOtp(phone) {
 }
 
 /**
- * Verify OTP and login/register the student.
- * - If user exists with this phone → login
- * - If user doesn't exist → register with provided name
+ * Verify OTP and log in the student.
+ * - Requires mobile number to exist in DB (pre-registered candidate)
  */
-export async function verifyPhoneOtp(phone, otp, name) {
+export async function verifyPhoneOtp(phone, otp) {
   const normalizedPhone = normalizePhone(phone);
+
+  // Candidate DB Whitelist Check
+  let user = await User.findOne({ phone: normalizedPhone });
+  if (!user) {
+    throw createHttpError(
+      404,
+      "আপনার মোবাইল নম্বরটি নিবন্ধিত ক্যান্ডিডেট তালিকায় পাওয়া যায়নি।"
+    );
+  }
 
   // Verify the OTP (throws on failure)
   verifyOtp(normalizedPhone, otp);
 
-  // Check if user already exists
-  let user = await User.findOne({ phone: normalizedPhone });
-
-  if (user) {
-    // Existing user — login
-    const token = signToken({ id: user._id.toString(), role: user.role });
-    return { token, user: user.toObject(), isNewUser: false };
-  }
-
-  // New user — register
-  if (!name || !String(name).trim()) {
-    throw createHttpError(400, "Full name is required for new registration");
-  }
-
-  user = await User.create({
-    name: String(name).trim(),
-    phone: normalizedPhone,
-    role: "student",
-  });
-
-  // Also create a Student profile linked to this user
+  // Ensure Student profile status is active for direct exam access
   const { default: Student } = await import("../student/student.model.js");
-  try {
-    await Student.create({
+  let studentProfile = await Student.findOne({ userId: user._id });
+  if (!studentProfile) {
+    studentProfile = await Student.create({
       userId: user._id,
-      fullName: String(name).trim(),
-      email: "",
+      fullName: user.name,
       phone: normalizedPhone,
-      status: "pending",
+      status: "active",
     });
-  } catch (profileErr) {
-    console.warn("Failed to auto-create student profile:", profileErr.message);
+  } else if (studentProfile.status !== "active") {
+    studentProfile.status = "active";
+    await studentProfile.save();
   }
 
   const token = signToken({ id: user._id.toString(), role: user.role });
-  return { token, user: user.toObject(), isNewUser: true };
+  return { token, user: user.toObject(), isNewUser: false };
 }
 
 /**
- * Verify MSG91 Widget Access Token and login/register student.
+ * Verify MSG91 Widget Access Token and login student.
  */
-export async function verifyMsg91WidgetToken(accessToken, name) {
+export async function verifyMsg91WidgetToken(accessToken) {
   if (!accessToken) {
     throw createHttpError(400, "Access token is required");
   }
@@ -241,35 +239,31 @@ export async function verifyMsg91WidgetToken(accessToken, name) {
 
     const normalizedPhone = normalizePhone(phoneRaw);
 
-    // Find or create user
+    // Candidate DB Whitelist Check
     let user = await User.findOne({ phone: normalizedPhone });
-
-    if (user) {
-      const token = signToken({ id: user._id.toString(), role: user.role });
-      return { token, user: user.toObject(), isNewUser: false };
+    if (!user) {
+      throw createHttpError(
+        404,
+        "আপনার মোবাইল নম্বরটি নিবন্ধিত ক্যান্ডিডেট তালিকায় পাওয়া যায়নি। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।"
+      );
     }
 
-    user = await User.create({
-      name: String(name || "Student").trim(),
-      phone: normalizedPhone,
-      role: "student",
-    });
-
     const { default: Student } = await import("../student/student.model.js");
-    try {
-      await Student.create({
+    let studentProfile = await Student.findOne({ userId: user._id });
+    if (!studentProfile) {
+      studentProfile = await Student.create({
         userId: user._id,
-        fullName: String(name || "Student").trim(),
-        email: "",
+        fullName: user.name,
         phone: normalizedPhone,
-        status: "pending",
+        status: "active",
       });
-    } catch (profileErr) {
-      console.warn("Failed to auto-create student profile:", profileErr.message);
+    } else if (studentProfile.status !== "active") {
+      studentProfile.status = "active";
+      await studentProfile.save();
     }
 
     const token = signToken({ id: user._id.toString(), role: user.role });
-    return { token, user: user.toObject(), isNewUser: true };
+    return { token, user: user.toObject(), isNewUser: false };
   } catch (err) {
     if (err.statusCode) throw err;
     throw createHttpError(500, "MSG91 widget token verification failed: " + err.message);

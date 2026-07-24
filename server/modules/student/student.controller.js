@@ -4,6 +4,7 @@ import {
   getAllStudents,
   getStudentById,
   updateStudent,
+  importStudentsFromExcelBuffer,
 } from "./student.service.js";
 
 function ensureOwnershipOrAdmin(reqUser, student) {
@@ -159,6 +160,32 @@ export async function previewDocument(req, res, next) {
   }
 }
 
+export async function importExcelCandidates(req, res, next) {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ message: "Excel/CSV file is required" });
+    }
+
+    const result = await importStudentsFromExcelBuffer(req.file.buffer);
+
+    let message = "";
+    if (result.importedCount > 0) {
+      message = `🎉 ${result.importedCount} জন নতুন ক্যান্ডিডেট সফলভাবে যুক্ত হয়েছে! (${result.skippedCount} জন পূর্ববর্তী ক্যান্ডিডেট ইতোমধ্যে নিবন্ধিত ছিল)।`;
+    } else if (result.updatedCount > 0) {
+      message = `🔄 ${result.updatedCount} জন ক্যান্ডিডেটের তথ্য আপডেট করা হয়েছে (${result.skippedCount} জন অপরিবর্তিত)।`;
+    } else {
+      message = `ℹ️ কোনো নতুন ক্যান্ডিডেট পাওয়া যায়নি। তালিকায় থাকা ${result.skippedCount} জন ক্যান্ডিডেট ইতোমধ্যে নিবন্ধিত রয়েছে।`;
+    }
+
+    return res.json({
+      message,
+      result,
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
+
 export default {
   createStudentProfile,
   listStudents,
@@ -167,5 +194,7 @@ export default {
   updateStudentProfile,
   uploadDocument,
   previewDocument,
+  importExcelCandidates,
 };
+
 

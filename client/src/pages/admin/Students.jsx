@@ -4,12 +4,15 @@ import FormInput from "../../components/FormInput";
 import Table from "../../components/Table";
 import Button from "../../components/Button";
 import IdCard from "../../components/IdCard";
+import StudentViewModal from "../../components/StudentViewModal";
+import StudentEditModal from "../../components/StudentEditModal";
 import api from "../../services/api";
 
 function Students() {
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [viewingStudentModal, setViewingStudentModal] = useState(null);
   const [editingStudent, setEditingStudent] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -34,16 +37,37 @@ function Students() {
     loadStudentsAndCourses();
   }, []);
 
+  const [selectedCourseFilter, setSelectedCourseFilter] = useState("ALL");
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState("ALL");
+
+  const availableCourses = useMemo(() => {
+    const set = new Set();
+    courses.forEach((c) => { if (c.title) set.add(c.title); });
+    students.forEach((s) => { if (s.course) set.add(s.course); });
+    return Array.from(set).sort();
+  }, [courses, students]);
+
   const filteredStudents = useMemo(() => {
     const query = search.toLowerCase();
-    return students.filter(
-      (student) =>
+    return students.filter((student) => {
+      const matchesSearch =
         student.fullName.toLowerCase().includes(query) ||
         student.email.toLowerCase().includes(query) ||
         (student.course || "").toLowerCase().includes(query) ||
-        (student.studentId || "").toLowerCase().includes(query)
-    );
-  }, [search, students]);
+        (student.studentId || "").toLowerCase().includes(query) ||
+        (student.phone || "").includes(query);
+
+      const matchesCourse =
+        selectedCourseFilter === "ALL" ||
+        (student.course || "").toLowerCase() === selectedCourseFilter.toLowerCase();
+
+      const matchesStatus =
+        selectedStatusFilter === "ALL" ||
+        (student.status || "").toLowerCase() === selectedStatusFilter.toLowerCase();
+
+      return matchesSearch && matchesCourse && matchesStatus;
+    });
+  }, [search, selectedCourseFilter, selectedStatusFilter, students]);
 
   const handleEdit = (student) => {
     setIsCreating(false);
@@ -224,16 +248,59 @@ function Students() {
       label: "Actions",
       render: (_, row) => (
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setSelectedStudent(row)} className="!px-3 !py-1.5 !text-xs">
-            Review
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSelectedStudent(row);
+              setViewingStudentModal(row);
+            }}
+            className="!px-3 !py-1.5 !text-xs flex items-center gap-1"
+          >
+            <span className="material-icons text-[14px]">visibility</span>
+            View
           </Button>
-          <Button variant="primary" onClick={() => handleEdit(row)} className="!px-3 !py-1.5 !text-xs">
-            Action
+          <Button
+            variant="primary"
+            onClick={() => handleEdit(row)}
+            className="!px-3 !py-1.5 !text-xs flex items-center gap-1"
+          >
+            <span className="material-icons text-[14px]">edit</span>
+            Edit
           </Button>
         </div>
       ),
     },
   ];
+
+  const [uploadingExcel, setUploadingExcel] = useState(false);
+  const [excelMsg, setExcelMsg] = useState("");
+
+  const handleExcelImport = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingExcel(true);
+      setError("");
+      setExcelMsg("");
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await api.post("/students/import-excel", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setExcelMsg(response.data.message || "Candidates imported successfully");
+      const studentsRes = await api.get("/students");
+      setStudents(studentsRes.data.students || []);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to import Excel file");
+    } finally {
+      setUploadingExcel(false);
+      event.target.value = "";
+    }
+  };
 
   return (
     <div className="w-full space-y-6">
@@ -242,19 +309,89 @@ function Students() {
           <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Verification Queue</p>
           <h1 className="mt-1 font-heading text-3xl font-extrabold text-slate-900">Manage Enrollments</h1>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xl">
-          <div className="flex-1">
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-2xl items-end">
+          <div className="flex-1 w-full">
             <FormInput label="Search students" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by name, ID, or course" />
           </div>
-          <Button onClick={handleCreate} variant="primary" className="whitespace-nowrap sm:mt-6">
+
+          <label className="sm:mb-0 mb-2 cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-indigo-400 bg-indigo-50/50 hover:bg-indigo-100/60 px-4 py-3 text-xs font-bold text-indigo-700 transition-colors shrink-0">
+            <span className="material-icons text-indigo-600 text-lg">upload_file</span>
+            {uploadingExcel ? "Importing..." : "Import Candidate Excel"}
+            <input type="file" accept=".xlsx, .xls, .csv" onChange={handleExcelImport} disabled={uploadingExcel} className="hidden" />
+          </label>
+
+          <Button onClick={handleCreate} variant="primary" className="whitespace-nowrap shrink-0">
             + New Student
           </Button>
         </div>
       </section>
 
+      {excelMsg ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-bold text-emerald-700 border border-emerald-200 flex items-center gap-2"><span className="material-icons">check_circle</span>{excelMsg}</div> : null}
       {error ? <div className="rounded-2xl bg-rose-50 p-4 text-sm font-bold text-rose-700 border border-rose-200">{error}</div> : null}
 
-      <Table columns={columns} rows={filteredStudents} emptyMessage="No students found" />
+      {/* ─── COURSE & STATUS FILTER BAR ─── */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="material-icons text-indigo-600 text-lg">filter_alt</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Filter By:</span>
+          </div>
+
+          {/* Course Filter Dropdown */}
+          <select
+            value={selectedCourseFilter}
+            onChange={(e) => setSelectedCourseFilter(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/20"
+          >
+            <option value="ALL">All Courses ({students.length})</option>
+            {availableCourses.map((c) => {
+              const count = students.filter((s) => (s.course || "").toLowerCase() === c.toLowerCase()).length;
+              return (
+                <option key={c} value={c}>
+                  {c} ({count})
+                </option>
+              );
+            })}
+          </select>
+
+          {/* Status Filter Dropdown */}
+          <select
+            value={selectedStatusFilter}
+            onChange={(e) => setSelectedStatusFilter(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/20"
+          >
+            <option value="ALL">All Statuses</option>
+            <option value="active">Active Only</option>
+            <option value="pending">Pending Review</option>
+            <option value="rejected">Rejected</option>
+            <option value="inactive">Inactive</option>
+          </select>
+
+          {(selectedCourseFilter !== "ALL" || selectedStatusFilter !== "ALL" || search) && (
+            <button
+              onClick={() => {
+                setSelectedCourseFilter("ALL");
+                setSelectedStatusFilter("ALL");
+                setSearch("");
+              }}
+              className="text-xs font-bold text-rose-600 hover:text-rose-800 transition-colors flex items-center gap-1 ml-1"
+            >
+              <span className="material-icons text-sm">clear</span>
+              Reset Filters
+            </button>
+          )}
+        </div>
+
+        {/* Candidate Counter Badge */}
+        <div className="flex items-center gap-2 self-end sm:self-center">
+          <span className="text-xs font-semibold text-slate-500">Showing:</span>
+          <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-100">
+            {filteredStudents.length} of {students.length} Candidates
+          </span>
+        </div>
+      </div>
+
+      <Table columns={columns} rows={filteredStudents} emptyMessage="No students found matching your filter criteria" />
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <article className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200/80 h-fit">
@@ -318,157 +455,32 @@ function Students() {
             </div>
           )}
         </article>
-
-        <article className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200/80 h-fit">
-          <h2 className="font-heading text-xl font-extrabold text-slate-900 mb-5">
-             {isCreating ? "Register New Student" : "Edit Student Profile"}
-          </h2>
-          {editingStudent ? (
-            <form onSubmit={handleSave} className="grid gap-5">
-              
-              <div className="flex items-center gap-4 mb-2">
-                 <div className="relative group">
-                   <div className="h-16 w-16 shrink-0 rounded-lg bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 text-xl font-bold overflow-hidden shadow-sm relative">
-                     {editingStudent.profilePhoto ? (
-                       <img src={editingStudent.profilePhoto} alt="Preview" className="h-full w-full object-cover" />
-                     ) : (
-                       <span className="material-icons text-indigo-300">person</span>
-                     )}
-                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                       <span className="material-icons text-white text-sm">{uploadingPhoto ? 'hourglass_empty' : 'upload'}</span>
-                     </div>
-                   </div>
-                   <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={handleAdminPhotoUpload} disabled={uploadingPhoto} />
-                 </div>
-                 <div>
-                   <p className="text-sm font-bold text-slate-900">Profile Photo</p>
-                   <p className="text-xs text-slate-500">Click to upload image</p>
-                 </div>
-              </div>
-
-              <div className="rounded-2xl bg-indigo-50 p-4 border border-indigo-100">
-                <label className="block mb-2">
-                   <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-indigo-700 ml-1">Assign Student ID</span>
-                   <div className="flex gap-2">
-                     <input
-                       type="text"
-                       value={editingStudent.studentId}
-                       onChange={(event) => setEditingStudent((previous) => ({ ...previous, studentId: event.target.value }))}
-                       placeholder="e.g. EME-2026-0001"
-                       className="w-full rounded-xl border border-indigo-200 bg-white px-4 py-3 text-sm text-indigo-900 font-bold outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20"
-                     />
-                     <Button type="button" variant="outline" onClick={generateRandomId} className="shrink-0 bg-white" title="Auto Generate">
-                       <span className="material-icons text-indigo-600">autorenew</span>
-                     </Button>
-                   </div>
-                </label>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormInput label="Full Name" required value={editingStudent.fullName} onChange={(event) => setEditingStudent((previous) => ({ ...previous, fullName: event.target.value }))} />
-                <FormInput label="Email" type="email" required disabled={!isCreating} value={editingStudent.email} onChange={(event) => setEditingStudent((previous) => ({ ...previous, email: event.target.value }))} />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormInput label="Phone" value={editingStudent.phone} onChange={(event) => setEditingStudent((previous) => ({ ...previous, phone: event.target.value }))} />
-                {isCreating ? (
-                  <FormInput label="Initial Password" type="password" value={editingStudent.password} onChange={(event) => setEditingStudent((previous) => ({ ...previous, password: event.target.value }))} placeholder="Leaves blank for eme12345" />
-                ) : (
-                  <div className="block">
-                     <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Enrollment Status</span>
-                     <select
-                       value={editingStudent.status}
-                       onChange={(event) => setEditingStudent((previous) => ({ ...previous, status: event.target.value }))}
-                       className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
-                     >
-                       <option value="pending">Pending Review</option>
-                       <option value="active">Approved & Active</option>
-                       <option value="rejected">Rejected</option>
-                       <option value="inactive">Inactive</option>
-                     </select>
-                  </div>
-                )}
-              </div>
-
-              <label className="block">
-                <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Assign Course</span>
-                <select
-                  value={editingStudent.course}
-                  onChange={(event) => setEditingStudent((previous) => ({ ...previous, course: event.target.value }))}
-                  required
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
-                >
-                  <option value="" disabled>Select a course program</option>
-                  {courses.map((course) => (
-                    <option key={course._id} value={course.title}>{course.title}</option>
-                  ))}
-                </select>
-              </label>
-
-              {isCreating && (
-                 <label className="block">
-                   <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Enrollment Status</span>
-                   <select
-                     value={editingStudent.status}
-                     onChange={(event) => setEditingStudent((previous) => ({ ...previous, status: event.target.value }))}
-                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
-                   >
-                     <option value="pending">Pending Review</option>
-                     <option value="active">Approved & Active</option>
-                     <option value="rejected">Rejected</option>
-                     <option value="inactive">Inactive</option>
-                   </select>
-                 </label>
-              )}
-
-              {/* Documents Upload Section */}
-              <div className="border-t border-slate-100 pt-5">
-                <div className="flex justify-between items-center mb-3">
-                   <span className="block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Verification Documents</span>
-                   <label className={`flex items-center gap-1 cursor-pointer text-xs font-bold text-indigo-600 hover:text-indigo-800 ${uploadingDoc ? 'opacity-50 pointer-events-none' : ''}`}>
-                     <span className="material-icons text-[14px]">add_circle</span>
-                     Upload
-                     <input type="file" accept=".pdf,.png,.jpg,.jpeg" className="hidden" onChange={handleAdminDocUpload} disabled={uploadingDoc} />
-                   </label>
-                </div>
-                {editingStudent.documents && editingStudent.documents.length > 0 ? (
-                  <div className="grid gap-2">
-                    {editingStudent.documents.map((docUrl, idx) => (
-                      <div key={idx} className="flex justify-between items-center p-2 rounded-lg border border-slate-200 bg-slate-50">
-                         <div className="flex items-center gap-2 overflow-hidden">
-                           <span className="material-icons text-slate-400 text-[16px]">description</span>
-                           <span className="text-xs text-slate-600 truncate">Document {idx + 1}</span>
-                         </div>
-                         <button type="button" onClick={() => removeDocument(idx)} className="text-rose-400 hover:text-rose-600">
-                           <span className="material-icons text-[16px]">cancel</span>
-                         </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 text-center">
-                    <p className="text-xs text-slate-400">No documents uploaded.</p>
-                  </div>
-                )}
-              </div>
-              
-              <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                <Button type="button" variant="outline" onClick={() => { setEditingStudent(null); setIsCreating(false); }} className="w-full">
-                  Cancel
-                </Button>
-                <Button type="submit" loading={saving} variant="primary" className="w-full">
-                  {isCreating ? "Create Student" : "Save Changes"}
-                </Button>
-              </div>
-            </form>
-          ) : (
-            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-              <span className="material-icons text-slate-400 text-xl">edit_note</span>
-              <p className="text-sm font-medium text-slate-500">Click "Action" on a student or "New Student" to edit profile details.</p>
-            </div>
-          )}
-        </article>
       </section>
+
+      {/* Student Profile Details View Modal */}
+      {viewingStudentModal && (
+        <StudentViewModal
+          student={viewingStudentModal}
+          onClose={() => setViewingStudentModal(null)}
+          onEdit={handleEdit}
+        />
+      )}
+
+      {/* Student Profile Edit / Create Modal */}
+      {editingStudent && (
+        <StudentEditModal
+          editingStudent={editingStudent}
+          setEditingStudent={setEditingStudent}
+          isCreating={isCreating}
+          courses={courses}
+          onClose={() => {
+            setEditingStudent(null);
+            setIsCreating(false);
+          }}
+          onSave={handleSave}
+          saving={saving}
+        />
+      )}
     </div>
   );
 }

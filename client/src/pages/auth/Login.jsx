@@ -380,12 +380,12 @@ function Login({ defaultRole = "student" }) {
               {step === "phone" && (
                 <div className="animate-slide-up">
                   <div className="mb-8 text-center lg:text-left">
-                    <h1 className="font-heading text-3xl font-extrabold text-slate-900 dark:text-white">Welcome to EME</h1>
-                    <p className="mt-2 text-sm text-slate-500 dark:text-gray-400 font-medium">Enter your mobile number to sign in or create an account</p>
+                    <h1 className="font-heading text-3xl font-extrabold text-slate-900 dark:text-white">Student Portal</h1>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-gray-400 font-medium">Enter your registered mobile number to receive an OTP</p>
                   </div>
                   <form onSubmit={handleSendOtp} className="space-y-5">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Mobile Number</label>
+                      <label className="text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Registered Mobile Number</label>
                       <div className="relative flex">
                         <div className="flex items-center gap-1.5 px-4 rounded-l-xl border-2 border-r-0 border-slate-200 bg-slate-100 dark:bg-slate-800 dark:border-slate-700">
                           <span className="text-lg">🇮🇳</span>
@@ -394,7 +394,7 @@ function Login({ defaultRole = "student" }) {
                         <input
                           type="tel"
                           inputMode="numeric"
-                          placeholder="Enter 10 digit number"
+                          placeholder="Enter 10 digit mobile number"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                           required
@@ -402,11 +402,6 @@ function Login({ defaultRole = "student" }) {
                           className="flex-1 rounded-r-xl border-2 border-slate-200 bg-slate-50 text-slate-900 outline-none transition-all duration-200 py-3.5 px-4 text-sm font-medium tracking-wider focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:bg-slate-900 dark:border-slate-700 dark:text-white"
                         />
                       </div>
-                    </div>
-
-                    <div className="animate-slide-up">
-                      <InputField label="Full Name (for new students)" icon="person_outline" type="text" placeholder="Enter your full name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                      <p className="text-[11px] text-slate-400 mt-1.5 ml-1">Leave blank if you already have an account</p>
                     </div>
 
                     {error && (
@@ -417,7 +412,7 @@ function Login({ defaultRole = "student" }) {
 
                     <Button type="submit" loading={loading} disabled={phone.replace(/\D/g, "").length !== 10} className="w-full !py-4 !rounded-2xl shadow-lg shadow-indigo-500/20 font-bold text-[15px] mt-4">
                       <span className="material-icons text-[20px]">send</span>
-                      Send OTP
+                      Send OTP Code
                     </Button>
                   </form>
                 </div>
