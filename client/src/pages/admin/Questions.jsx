@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import FormInput from "../../components/FormInput";
 import Table from "../../components/Table";
@@ -23,6 +23,7 @@ function Questions() {
   const [editingQuestionId, setEditingQuestionId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const builderRef = useRef(null);
 
   useEffect(() => {
     const loadExams = async () => {
@@ -102,6 +103,7 @@ function Questions() {
       option3: question.options[3],
       correctAnswer: String(question.correctAnswer),
     });
+    builderRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (questionId) => {
@@ -164,14 +166,27 @@ function Questions() {
 
   return (
     <div className="w-full space-y-6">
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[420px,1fr]">
-        <article className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200/80 h-fit">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Question Builder</p>
-          <h1 className="mt-1 font-heading text-2xl font-extrabold text-slate-900">{editingQuestionId ? "Edit MCQ" : "Manage MCQs"}</h1>
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[420px,1fr] items-start">
+        {/* Sticky Question Builder Panel */}
+        <article
+          ref={builderRef}
+          className="rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 xl:sticky xl:top-20 self-start xl:max-h-[calc(100vh-96px)] xl:overflow-y-auto"
+        >
+          <div className="flex items-center justify-between pb-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Question Builder</p>
+            {editingQuestionId && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-900/30 px-2.5 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-700/60">
+                Editing MCQ
+              </span>
+            )}
+          </div>
+          <h1 className="mt-1 font-heading text-2xl font-extrabold text-slate-900 dark:text-white">
+            {editingQuestionId ? "Edit MCQ" : "Manage MCQs"}
+          </h1>
 
           <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
             <label className="block">
-              <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Exam</span>
+              <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">Exam</span>
               <select
                 value={form.examId}
                 onChange={(event) => {
@@ -179,7 +194,7 @@ function Questions() {
                   setForm((previous) => ({ ...previous, examId: event.target.value }));
                 }}
                 disabled={!!editingQuestionId}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               >
                 {exams.map((exam) => (
                   <option key={exam._id} value={exam._id}>
@@ -196,11 +211,11 @@ function Questions() {
             <FormInput label="Option 4" value={form.option3} onChange={(event) => setForm((previous) => ({ ...previous, option3: event.target.value }))} required />
 
             <label className="block">
-              <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Correct answer</span>
+              <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">Correct answer</span>
               <select
                 value={form.correctAnswer}
                 onChange={(event) => setForm((previous) => ({ ...previous, correctAnswer: event.target.value }))}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               >
                 <option value="0">Option 1</option>
                 <option value="1">Option 2</option>
@@ -222,8 +237,17 @@ function Questions() {
           </form>
         </article>
 
+        {/* Questions List / Bank */}
         <article className="space-y-4">
-          {error ? <div className="rounded-2xl bg-rose-50 p-4 text-sm font-bold text-rose-700 border border-rose-200">{error}</div> : null}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Question Bank</p>
+              <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">
+                Questions {questions.length > 0 && <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">({questions.length})</span>}
+              </h2>
+            </div>
+          </div>
+          {error ? <div className="rounded-2xl bg-rose-50 dark:bg-rose-900/20 p-4 text-sm font-bold text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">{error}</div> : null}
           <Table columns={columns} rows={questions} emptyMessage="No questions added yet" />
         </article>
       </section>

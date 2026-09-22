@@ -133,10 +133,10 @@ function Exams() {
 
   return (
     <div className="w-full space-y-6">
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[420px,1fr]">
-        <article className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200/80">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Exam Builder</p>
-          <h1 className="mt-1 font-heading text-2xl font-extrabold text-slate-900">{editingExamId ? "Edit Exam" : "Create Exams"}</h1>
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[420px,1fr] items-start">
+        <article className="rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 xl:sticky xl:top-20 self-start xl:max-h-[calc(100vh-96px)] xl:overflow-y-auto">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Exam Builder</p>
+          <h1 className="mt-1 font-heading text-2xl font-extrabold text-slate-900 dark:text-white">{editingExamId ? "Edit Exam" : "Create Exams"}</h1>
 
           <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
             <FormInput label="Exam title" value={form.title} onChange={(event) => setForm((previous) => ({ ...previous, title: event.target.value }))} required />
