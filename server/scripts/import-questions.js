@@ -100,9 +100,24 @@ async function importQuestions() {
       });
     }
 
-    console.log(`Parsed ${questionsData.length} questions from the markdown file.`);
+    console.log(`Parsed ${questionsData.length} raw questions from the markdown file.`);
 
-    if (questionsData.length === 0) {
+    // Deduplicate questions by normalized text, prioritizing clean options
+    const uniqueMap = new Map();
+    for (const q of questionsData) {
+      const norm = q.question.toLowerCase().replace(/^(##\s*)?\d+[\.\)]\s*/, '').replace(/\s+/g, ' ').trim();
+      const hasDummy = q.options.some((o) => typeof o === 'string' && /^Option [A-D]$/i.test(o.trim()));
+      if (!uniqueMap.has(norm)) {
+        uniqueMap.set(norm, q);
+      } else if (!hasDummy) {
+        uniqueMap.set(norm, q);
+      }
+    }
+
+    const finalQuestions = Array.from(uniqueMap.values());
+    console.log(`Deduplicated to ${finalQuestions.length} unique questions.`);
+
+    if (finalQuestions.length === 0) {
       console.log("No questions found to import.");
       process.exit(0);
     }
@@ -113,16 +128,16 @@ async function importQuestions() {
       duration: 90,
       totalMarks: 100,
       passMarks: 40,
-      questionCount: 50,
+      questionCount: finalQuestions.length,
       course: "Data Analytics",
       createdBy: createdBy
     });
 
     await exam.save();
-    console.log(`Created Exam: ${exam.title} (ID: ${exam._id})`);
+    console.log(`Created Exam: ${exam.title} (ID: ${exam._id}) with questionCount: ${finalQuestions.length}`);
 
     // Prepare Questions for Insert
-    const questionsToInsert = questionsData.map(q => ({
+    const questionsToInsert = finalQuestions.map(q => ({
       ...q,
       examId: exam._id
     }));
