@@ -329,19 +329,19 @@ function Students() {
       {excelMsg ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-bold text-emerald-700 border border-emerald-200 flex items-center gap-2"><span className="material-icons">check_circle</span>{excelMsg}</div> : null}
       {error ? <div className="rounded-2xl bg-rose-50 p-4 text-sm font-bold text-rose-700 border border-rose-200">{error}</div> : null}
 
-      {/* ─── COURSE & STATUS FILTER BAR ─── */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+      {/* ─── STICKY COURSE & STATUS FILTER BAR ─── */}
+      <div className="sticky top-16 z-20 backdrop-blur-md bg-white/95 dark:bg-slate-900/95 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="material-icons text-indigo-600 text-lg">filter_alt</span>
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Filter By:</span>
+            <span className="material-icons text-indigo-600 dark:text-indigo-400 text-lg">filter_alt</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Filter By:</span>
           </div>
 
           {/* Course Filter Dropdown */}
           <select
             value={selectedCourseFilter}
             onChange={(e) => setSelectedCourseFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/20"
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
           >
             <option value="ALL">All Courses ({students.length})</option>
             {availableCourses.map((c) => {
@@ -358,7 +358,7 @@ function Students() {
           <select
             value={selectedStatusFilter}
             onChange={(e) => setSelectedStatusFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/20"
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
           >
             <option value="ALL">All Statuses</option>
             <option value="active">Active Only</option>

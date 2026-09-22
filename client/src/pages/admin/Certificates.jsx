@@ -96,10 +96,11 @@ function Certificates() {
 
   return (
     <div className="w-full space-y-6">
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[420px,1fr]">
-        <article className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200/80 h-fit">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Verification Desk</p>
-          <h1 className="mt-1 font-heading text-2xl font-extrabold text-slate-900">Certificates</h1>
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[420px,1fr] items-start">
+        {/* Sticky Verification Desk Panel */}
+        <article className="rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 xl:sticky xl:top-20 self-start xl:max-h-[calc(100vh-96px)] xl:overflow-y-auto">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Verification Desk</p>
+          <h1 className="mt-1 font-heading text-2xl font-extrabold text-slate-900 dark:text-white">Certificates</h1>
 
           <form onSubmit={handleVerify} className="mt-6 grid gap-4">
             <FormInput 
@@ -114,15 +115,22 @@ function Certificates() {
           </form>
         </article>
 
+        {/* Certificates Table */}
         <article className="space-y-4">
-          {error ? <div className="rounded-2xl bg-rose-50 p-4 text-sm font-bold text-rose-700 border border-rose-200">{error}</div> : null}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200/80">
-            {loading ? (
-               <div className="flex h-32 items-center justify-center text-sm font-bold text-slate-400">Loading certificates...</div>
-            ) : (
-               <Table columns={columns} rows={rows} emptyMessage="No certificates found" />
-            )}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Registry</p>
+              <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">
+                Issued Certificates {rows.length > 0 && <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">({rows.length})</span>}
+              </h2>
+            </div>
           </div>
+          {error ? <div className="rounded-2xl bg-rose-50 dark:bg-rose-900/20 p-4 text-sm font-bold text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">{error}</div> : null}
+          {loading ? (
+            <div className="flex h-32 items-center justify-center text-sm font-bold text-slate-400 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm">Loading certificates...</div>
+          ) : (
+            <Table columns={columns} rows={rows} emptyMessage="No certificates found" />
+          )}
         </article>
       </section>
     </div>

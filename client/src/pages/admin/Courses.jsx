@@ -146,18 +146,18 @@ function Courses() {
       {error ? <div className="rounded-2xl bg-rose-50 p-4 text-sm font-bold text-rose-700 border border-rose-200">{error}</div> : null}
       {message ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-bold text-emerald-700 border border-emerald-200">{message}</div> : null}
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr,400px]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr,400px] items-start">
         <div className="order-2 xl:order-1">
            <Table columns={columns} rows={courses} emptyMessage="No courses found. Create one!" />
         </div>
 
         {(editingCourse || isCreating) && (
-          <article className="order-1 xl:order-2 rounded-3xl bg-white p-6 shadow-sm border border-slate-200/80 h-fit sticky top-6">
-            <div className="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
-               <h2 className="font-heading text-xl font-extrabold text-slate-900">
+          <article className="order-1 xl:order-2 rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 xl:sticky xl:top-20 self-start xl:max-h-[calc(100vh-96px)] xl:overflow-y-auto">
+            <div className="flex items-center justify-between mb-5 border-b border-slate-100 dark:border-slate-800 pb-4">
+               <h2 className="font-heading text-xl font-extrabold text-slate-900 dark:text-white">
                  {isCreating ? "Create Course" : "Edit Course"}
                </h2>
-               <button onClick={() => setEditingCourse(null)} className="text-slate-400 hover:text-slate-600">
+               <button onClick={() => setEditingCourse(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                  <span className="material-icons">close</span>
                </button>
             </div>
@@ -188,11 +188,11 @@ function Courses() {
                 />
                 
                 <label className="block">
-                  <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Status</span>
+                  <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">Status</span>
                   <select
                     value={editingCourse.status}
                     onChange={(e) => setEditingCourse({ ...editingCourse, status: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                   >
                     <option value="active">Active</option>
                     <option value="draft">Draft</option>
@@ -202,11 +202,11 @@ function Courses() {
               </div>
 
               <label className="block">
-                <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Description</span>
+                <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">Description</span>
                 <textarea
                   value={editingCourse.description}
                   onChange={(e) => setEditingCourse({ ...editingCourse, description: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                   rows={4}
                   placeholder="Brief course description..."
                 ></textarea>

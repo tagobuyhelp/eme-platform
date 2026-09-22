@@ -291,9 +291,9 @@ function Exam() {
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
         {/* Main Question Display Box */}
-        <section className="lg:col-span-3 space-y-6 flex flex-col h-full">
+        <section className="lg:col-span-3 space-y-6 flex flex-col">
           <article className="rounded-2xl md:rounded-3xl bg-white dark:bg-slate-900 p-5 sm:p-8 shadow-sm border border-slate-200/80 dark:border-slate-800 flex-1 flex flex-col">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <span className="text-xs uppercase font-extrabold tracking-widest text-slate-400">
@@ -398,7 +398,7 @@ function Exam() {
 
         {/* Desktop Question Palette Sidebar */}
         <section className="hidden lg:block lg:col-span-1">
-          <aside className="rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-6 sticky top-28">
+          <aside className="rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-6 sticky top-[190px] self-start max-h-[calc(100vh-210px)] overflow-y-auto">
             <div>
               <h3 className="font-heading text-lg md:text-xl font-extrabold text-slate-900 dark:text-white">Question Palette</h3>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Status Overview</p>

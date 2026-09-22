@@ -222,8 +222,8 @@ function Profile() {
         </div>
       )}
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[340px,1fr]">
-        <article className="rounded-3xl bg-white p-6 md:p-8 shadow-sm border border-slate-200/80 h-fit flex flex-col items-center">
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[340px,1fr] items-start">
+        <article className="rounded-3xl bg-white dark:bg-slate-900 p-6 md:p-8 shadow-sm border border-slate-200/80 dark:border-slate-800 xl:sticky xl:top-20 self-start xl:max-h-[calc(100vh-96px)] xl:overflow-y-auto flex flex-col items-center">
           {isActive ? (
             <div className="w-full flex justify-center pb-6">
               <IdCard student={student} />

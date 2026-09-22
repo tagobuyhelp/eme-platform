@@ -187,7 +187,7 @@ function Dashboard() {
       </section>
 
       {/* 3. Main Dashboard Content */}
-      <section className="grid grid-cols-1 gap-5 md:gap-8 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-5 md:gap-8 lg:grid-cols-3 items-start">
         
         {/* Left Side: Completion Tracker & Recent performance */}
         <div className="lg:col-span-2 space-y-5 md:space-y-8">
@@ -330,8 +330,8 @@ function Dashboard() {
         </div>
 
         {/* Right Side: Modern Minimalist Certificate Showcase Card */}
-        <div className="lg:col-span-1">
-          <article className="rounded-2xl md:rounded-3xl bg-white p-5 md:p-8 shadow-sm border border-slate-200/80 h-full flex flex-col relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="lg:col-span-1 lg:sticky lg:top-20 self-start">
+          <article className="rounded-2xl md:rounded-3xl bg-white dark:bg-slate-900 p-5 md:p-8 shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-col relative overflow-hidden group hover:shadow-md transition-all">
             
             <div className="mb-5 md:mb-8 relative z-10">
               <h2 className="font-heading text-lg md:text-2xl font-extrabold text-slate-900">Credential</h2>

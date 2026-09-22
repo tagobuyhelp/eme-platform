@@ -104,14 +104,14 @@ function AdminProfile() {
       {error && <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 text-sm font-bold text-rose-700">{error}</div>}
       {success && <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-sm font-bold text-emerald-700">{success}</div>}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
         {/* Photo Upload Column */}
-        <div className="md:col-span-1 flex flex-col items-center">
-          <div className="w-40 h-40 rounded-full border-4 border-white bg-slate-100 shadow-lg shadow-slate-200/50 overflow-hidden relative group">
+        <div className="md:col-span-1 flex flex-col items-center md:sticky md:top-20 self-start">
+          <div className="w-40 h-40 rounded-full border-4 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-800 shadow-lg shadow-slate-200/50 dark:shadow-none overflow-hidden relative group">
              {form.profilePhoto ? (
                <img src={form.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
              ) : (
-               <div className="w-full h-full flex items-center justify-center text-5xl font-bold text-slate-300">
+               <div className="w-full h-full flex items-center justify-center text-5xl font-bold text-slate-300 dark:text-slate-600">
                  {form.name ? form.name.charAt(0).toUpperCase() : "A"}
                </div>
              )}
@@ -127,8 +127,8 @@ function AdminProfile() {
 
         {/* Details Column */}
         <div className="md:col-span-2">
-          <form onSubmit={handleSave} className="rounded-3xl bg-white p-6 md:p-8 shadow-sm border border-slate-200/80 space-y-6">
-            <h2 className="font-heading text-lg md:text-xl font-bold text-slate-900 mb-6">Personal Information</h2>
+          <form onSubmit={handleSave} className="rounded-3xl bg-white dark:bg-slate-900 p-6 md:p-8 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-6">
+            <h2 className="font-heading text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-6">Personal Information</h2>
             
             <FormInput 
               label="Full Name" 
