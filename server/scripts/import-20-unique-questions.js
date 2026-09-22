@@ -8,13 +8,38 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const isProduction = process.argv.includes('--production');
-const envFile = isProduction ? '../../.env.production' : '../../.env';
-dotenv.config({ path: path.join(__dirname, envFile) });
+
+// Allow passing mongo URI directly via CLI flag: --uri="mongodb://..."
+const cliUriArg = process.argv.find(arg => arg.startsWith('--uri='));
+const cliUri = cliUriArg ? cliUriArg.split('=').slice(1).join('=') : null;
+
+// Smart env resolution: check .env.production first if flag passed, then fallback to .env in root and subdirectories
+const candidateEnvPaths = [
+  isProduction ? path.resolve(__dirname, '../../.env.production') : null,
+  isProduction ? path.resolve(process.cwd(), '.env.production') : null,
+  path.resolve(__dirname, '../../.env'),
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(__dirname, '../.env'),
+  path.resolve(process.cwd(), 'server/.env'),
+].filter(Boolean);
+
+let loadedEnvPath = null;
+
+// 1. Try to load candidate env files
+for (const envPath of candidateEnvPaths) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath, override: false });
+    if (process.env.MONGO_URI || process.env.MONGODB_URI) {
+      loadedEnvPath = envPath;
+      break;
+    }
+  }
+}
 
 console.log(`\n==============================================`);
 console.log(`IMPORTING 20 UNIQUE QUESTIONS`);
-console.log(`TARGET: ${isProduction ? 'PRODUCTION DATABASE' : 'LOCAL / DEVELOPMENT DATABASE'}`);
-console.log(`ENV FILE: ${envFile}`);
+console.log(`TARGET: ${isProduction ? 'PRODUCTION DATABASE' : 'DATABASE'}`);
+console.log(`ENV FILE LOADED: ${loadedEnvPath || (cliUri ? 'Provided via --uri CLI flag' : 'None detected')}`);
 console.log(`==============================================\n`);
 
 const examSchema = new mongoose.Schema(
@@ -47,9 +72,13 @@ const Exam = mongoose.models.Exam || mongoose.model("Exam", examSchema);
 const Question = mongoose.models.Question || mongoose.model("Question", questionSchema);
 
 async function import20UniqueQuestions() {
-  const uri = process.env.MONGO_URI;
+  const uri = cliUri || process.env.MONGO_URI || process.env.MONGODB_URI;
   if (!uri) {
-    console.error("ERROR: MONGO_URI is not defined!");
+    console.error("\n[ERROR] MONGO_URI is not defined!");
+    console.error("Checked configuration locations:");
+    candidateEnvPaths.forEach(p => console.error(`  - ${p} -> [${fs.existsSync(p) ? 'FILE EXISTS' : 'FILE NOT FOUND'}]`));
+    console.error("\nTip: You can also pass the MongoDB URI directly via CLI flag:");
+    console.error('  node server/scripts/import-20-unique-questions.js --uri="mongodb://localhost:27017/eme-platform"\n');
     process.exit(1);
   }
 
