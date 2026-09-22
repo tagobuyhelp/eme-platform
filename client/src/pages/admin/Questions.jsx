@@ -135,10 +135,10 @@ function Questions() {
       label: "Options",
       render: (value, row) => (
         <div className="space-y-1.5 text-xs text-slate-500">
-          {value.map((option, index) => {
+          {(value || []).map((option, index) => {
             const isCorrect = row.correctAnswer === index;
             return (
-              <p key={option} className={`flex items-center gap-1 ${isCorrect ? "font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md inline-flex border border-emerald-100" : ""}`}>
+              <p key={`${row._id}-${index}`} className={`flex items-center gap-1 ${isCorrect ? "font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md inline-flex border border-emerald-100" : ""}`}>
                 {option} {isCorrect && <span className="material-icons text-[12px]">check_circle</span>}
               </p>
             );

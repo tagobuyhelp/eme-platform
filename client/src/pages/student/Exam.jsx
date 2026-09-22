@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Button from "../../components/Button";
@@ -18,18 +18,59 @@ function Exam() {
   const [error, setError] = useState("");
   const [fraudWarnings, setFraudWarnings] = useState(0);
   const [showMobilePalette, setShowMobilePalette] = useState(false);
+  const sessionKey = `active_exam_session_${id}`;
+
+  const timeLeftRef = useRef(timeLeft);
+  useEffect(() => {
+    timeLeftRef.current = timeLeft;
+  }, [timeLeft]);
 
   useEffect(() => {
     const loadExam = async () => {
       try {
         setLoading(true);
+
+        const savedSession = sessionStorage.getItem(sessionKey);
+        if (savedSession) {
+          try {
+            const parsed = JSON.parse(savedSession);
+            if (parsed.exam && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
+              setExam(parsed.exam);
+              setQuestions(parsed.questions);
+              setAnswers(parsed.answers || new Array(parsed.questions.length).fill(-1));
+              setFlagged(parsed.flagged || new Array(parsed.questions.length).fill(false));
+              if (typeof parsed.timeLeft === "number" && parsed.timeLeft > 0) {
+                setTimeLeft(parsed.timeLeft);
+              } else {
+                setTimeLeft((parsed.exam?.duration || 0) * 60);
+              }
+              setLoading(false);
+              return;
+            }
+          } catch (e) {
+            console.warn("Could not restore saved exam session", e);
+          }
+        }
+
         const response = await api.get(`/exams/${id}`);
         setExam(response.data.exam);
         const fetchedQuestions = response.data.questions || [];
         setQuestions(fetchedQuestions);
-        setAnswers(new Array(fetchedQuestions.length).fill(-1));
-        setFlagged(new Array(fetchedQuestions.length).fill(false));
-        setTimeLeft((response.data.exam?.duration || 0) * 60);
+        const initialAnswers = new Array(fetchedQuestions.length).fill(-1);
+        const initialFlagged = new Array(fetchedQuestions.length).fill(false);
+        const initialTime = (response.data.exam?.duration || 0) * 60;
+
+        setAnswers(initialAnswers);
+        setFlagged(initialFlagged);
+        setTimeLeft(initialTime);
+
+        sessionStorage.setItem(sessionKey, JSON.stringify({
+          exam: response.data.exam,
+          questions: fetchedQuestions,
+          answers: initialAnswers,
+          flagged: initialFlagged,
+          timeLeft: initialTime,
+        }));
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load exam");
       } finally {
@@ -38,10 +79,22 @@ function Exam() {
     };
 
     loadExam();
-  }, [id]);
+  }, [id, sessionKey]);
 
   useEffect(() => {
-    if (!timeLeft || loading || submitting) {
+    if (!loading && exam && questions.length > 0) {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        exam,
+        questions,
+        answers,
+        flagged,
+        timeLeft,
+      }));
+    }
+  }, [answers, exam, flagged, loading, questions, sessionKey, timeLeft]);
+
+  useEffect(() => {
+    if (loading || submitting) {
       return undefined;
     }
 
@@ -57,7 +110,7 @@ function Exam() {
     }, 1000);
 
     return () => window.clearInterval(timerId);
-  }, [loading, submitting, timeLeft]);
+  }, [loading, submitting]);
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -69,6 +122,7 @@ function Exam() {
       }));
 
       const response = await api.post(`/exams/${id}/submit`, { answers: formattedAnswers });
+      sessionStorage.removeItem(sessionKey);
       navigate(`/student/result/${id}`, {
         replace: true,
         state: {
@@ -80,7 +134,7 @@ function Exam() {
       setError(err.response?.data?.message || "Failed to submit exam");
       setSubmitting(false);
     }
-  }, [answers, questions, exam?.title, id, navigate]);
+  }, [answers, questions, exam?.title, id, navigate, sessionKey]);
 
   useEffect(() => {
     if (!loading && questions.length && timeLeft === 0 && !submitting) {
@@ -90,7 +144,7 @@ function Exam() {
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden && !loading && !submitting && timeLeft > 0) {
+      if (document.hidden && !loading && !submitting && timeLeftRef.current > 0) {
         setFraudWarnings((prev) => {
           const nextWarnings = prev + 1;
           if (nextWarnings >= 3) {
@@ -106,7 +160,7 @@ function Exam() {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [handleSubmit, loading, submitting, timeLeft]);
+  }, [handleSubmit, loading, submitting]);
 
   const currentQuestion = questions[currentIndex];
 
@@ -149,7 +203,22 @@ function Exam() {
   }
 
   if (!exam || !currentQuestion) {
-    return <div className="rounded-3xl bg-white border border-slate-200/80 p-8 text-sm font-bold text-slate-400">No exam data available.</div>;
+    return (
+      <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-8 text-center space-y-4 shadow-sm">
+        {error ? (
+          <div className="rounded-2xl bg-rose-50 dark:bg-rose-950/40 p-5 text-sm font-bold text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 max-w-lg mx-auto">
+            <span className="material-icons text-3xl mb-2 block text-rose-500">error_outline</span>
+            {error}
+          </div>
+        ) : (
+          <p className="text-sm font-bold text-slate-400">No exam data available.</p>
+        )}
+        <Button variant="outline" onClick={() => navigate("/student/exams")}>
+          <span className="material-icons text-sm">arrow_back</span>
+          Back to Exams
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -247,13 +316,13 @@ function Exam() {
             </div>
 
             <div className="mt-6 sm:mt-8 flex-1">
-              <h2 className="text-lg sm:text-xl font-bold leading-relaxed text-slate-900 dark:text-white">
+              <h2 className="text-lg sm:text-xl font-bold leading-relaxed text-slate-900 dark:text-white whitespace-pre-wrap">
                 {currentQuestion.question}
               </h2>
 
               {/* MCQ Options with A, B, C, D badges */}
               <div className="mt-6 sm:mt-8 grid gap-3 sm:gap-4">
-                {currentQuestion.options.map((option, optionIndex) => {
+                {(currentQuestion.options || []).map((option, optionIndex) => {
                   const isSelected = answers[currentIndex] === optionIndex;
                   const optionLetters = ["A", "B", "C", "D", "E", "F"];
 
@@ -277,7 +346,7 @@ function Exam() {
                           {optionLetters[optionIndex] || optionIndex + 1}
                         </span>
 
-                        <span className={`text-sm sm:text-base mt-0.5 ${isSelected ? "font-bold text-slate-900 dark:text-white" : "font-medium text-slate-700 dark:text-slate-300"}`}>
+                        <span className={`text-sm sm:text-base mt-0.5 whitespace-pre-wrap break-words ${isSelected ? "font-bold text-slate-900 dark:text-white" : "font-medium text-slate-700 dark:text-slate-300"}`}>
                           {option}
                         </span>
                       </div>
@@ -430,6 +499,7 @@ function Exam() {
                 let btnClass = "bg-slate-50 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700";
                 if (isAnswered) btnClass = "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border-emerald-300 font-black";
                 if (isFlagged) btnClass = "bg-amber-50 dark:bg-amber-950/40 text-amber-600 border-amber-300 font-black";
+                if (isAnswered && isFlagged) btnClass = "bg-gradient-to-br from-emerald-100 to-amber-100 text-slate-900 border-amber-400 font-black";
 
                 const activeClass = isCurrent ? "ring-2 ring-eme-cyan ring-offset-2 scale-105 z-10" : "";
 

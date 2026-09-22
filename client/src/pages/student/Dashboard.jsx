@@ -260,9 +260,12 @@ function Dashboard() {
             {exams.length > 0 ? (
               <div className="grid grid-cols-1 gap-4">
                 {exams.slice(0, 3).map((exam) => {
-                  const examResults = results.filter((r) => r.examId === exam._id);
-                  const hasPassed = examResults.some((r) => r.status === "pass");
-                  const attemptsCount = examResults.length;
+                  const attemptsCount = typeof exam.attemptsCount === "number"
+                    ? exam.attemptsCount
+                    : results.filter((r) => r.examId === exam._id).length;
+                  const hasPassed = typeof exam.hasPassed === "boolean"
+                    ? exam.hasPassed
+                    : results.some((r) => r.examId === exam._id && r.status === "pass");
 
                   return (
                     <ExamCard

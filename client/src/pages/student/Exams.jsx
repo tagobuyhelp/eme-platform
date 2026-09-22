@@ -32,8 +32,14 @@ function Exams() {
     loadData();
   }, []);
 
-  const getExamStatus = (examId) => {
-    const examResults = results.filter((r) => r.examId === examId);
+  const getExamStatus = (exam) => {
+    if (typeof exam.attemptsCount === "number") {
+      return {
+        attemptsCount: exam.attemptsCount,
+        hasPassed: !!exam.hasPassed,
+      };
+    }
+    const examResults = results.filter((r) => r.examId === exam._id);
     const hasPassed = examResults.some((r) => r.status === "pass");
     return {
       attemptsCount: examResults.length,
@@ -59,7 +65,7 @@ function Exams() {
 
       <section className="grid grid-cols-1 gap-4 md:gap-6">
         {exams.map((exam) => {
-          const { attemptsCount, hasPassed } = getExamStatus(exam._id);
+          const { attemptsCount, hasPassed } = getExamStatus(exam);
           return (
             <ExamCard
               key={exam._id}

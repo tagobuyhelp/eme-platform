@@ -88,6 +88,33 @@ export async function addQuestion(examId, data) {
   return q.toObject();
 }
 
+function normalizeQuestionText(text) {
+  if (!text || typeof text !== "string") return "";
+  return text
+    .toLowerCase()
+    .replace(/^(##\s*)?\d+[\.\)]\s*/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function scoreQuestionQuality(q) {
+  if (!q || !Array.isArray(q.options)) return 0;
+  let score = 10;
+  const hasDummy = q.options.some((opt) => typeof opt === "string" && /^Option [A-D]$/i.test(opt.trim()));
+  if (hasDummy) score -= 5;
+  if (/[A-D]\.\s+[A-Za-z0-9]/.test(q.question)) score -= 2;
+  return score;
+}
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export async function getAllExams() {
   return Exam.find().sort({ createdAt: -1 }).lean();
 }
@@ -106,9 +133,31 @@ export async function getExamById(examId, isAdmin = false) {
   }
   let questions = await query.sort({ createdAt: 1 }).lean();
 
-  if (!isAdmin && exam.questionCount && exam.questionCount > 0) {
-    // Shuffle and pick subset of questions
-    questions = questions.sort(() => 0.5 - Math.random()).slice(0, exam.questionCount);
+  if (!isAdmin) {
+    // 1. Deduplicate questions pool so no question is ever repeated
+    const uniqueMap = new Map();
+    for (const q of questions) {
+      const key = normalizeQuestionText(q.question);
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, q);
+      } else {
+        const existing = uniqueMap.get(key);
+        if (scoreQuestionQuality(q) > scoreQuestionQuality(existing)) {
+          uniqueMap.set(key, q);
+        }
+      }
+    }
+
+    const uniqueList = Array.from(uniqueMap.values());
+    // 2. Uniformly shuffle the unique questions
+    const shuffled = shuffleArray(uniqueList);
+
+    // 3. Pick at most exam.questionCount unique questions
+    if (exam.questionCount && exam.questionCount > 0) {
+      questions = shuffled.slice(0, Math.min(exam.questionCount, shuffled.length));
+    } else {
+      questions = shuffled;
+    }
   }
 
   return { exam, questions };
@@ -149,12 +198,12 @@ export async function submitExam(studentId, examId, answers) {
   const questionIds = answers.map((a) => a.questionId);
   const questions = await Question.find({ _id: { $in: questionIds }, examId }).select("correctAnswer").lean();
 
-  if (expectedCount && questions.length !== expectedCount) {
-     // Note: If expectedCount is set but the total questions available in DB is less than expectedCount, this could fail.
-     // Assuming admin configures it correctly. We check answers.length to prevent cheating.
-     if (answers.length !== expectedCount) {
-         throw createHttpError(400, `Expected ${expectedCount} answers, but got ${answers.length}`);
-     }
+  if (answers.length !== questions.length) {
+    throw createHttpError(400, `Expected ${questions.length} answers, but got ${answers.length}`);
+  }
+
+  if (expectedCount && questions.length > expectedCount) {
+    throw createHttpError(400, `Expected at most ${expectedCount} answers, but got ${questions.length}`);
   }
 
   let correctCount = 0;
@@ -174,8 +223,11 @@ export async function submitExam(studentId, examId, answers) {
     };
   });
 
-  const totalPossibleQuestions = expectedCount || questions.length;
-  const perQuestion = typeof exam.totalMarks === "number" && exam.totalMarks > 0
+  const totalPossibleQuestions = expectedCount && questions.length >= expectedCount
+    ? expectedCount
+    : questions.length;
+
+  const perQuestion = typeof exam.totalMarks === "number" && exam.totalMarks > 0 && totalPossibleQuestions > 0
     ? exam.totalMarks / totalPossibleQuestions
     : 1;
 

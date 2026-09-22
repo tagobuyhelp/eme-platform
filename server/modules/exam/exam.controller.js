@@ -1,4 +1,5 @@
 import Student from "../student/student.model.js";
+import Attempt from "./attempt.model.js";
 import {
   addQuestion,
   createExam,
@@ -35,11 +36,23 @@ export async function listExamsHandler(req, res, next) {
   try {
     let exams = await getAllExams();
     
-    // If the requester is a student, only show exams for their enrolled course
+    // If the requester is a student, only show exams for their enrolled course and attach real attempt info
     if (req.user?.role === "student") {
-      const student = await Student.findOne({ userId: req.user.id }).select("course").lean();
+      const student = await Student.findOne({ userId: req.user.id }).select("_id course").lean();
       if (student && student.course) {
         exams = exams.filter(exam => exam.course === student.course);
+
+        const attempts = await Attempt.find({ studentId: student._id }).select("examId status").lean();
+
+        exams = exams.map(exam => {
+          const examAttempts = attempts.filter(a => a.examId.toString() === exam._id.toString());
+          const hasPassed = examAttempts.some(a => a.status === "pass");
+          return {
+            ...exam,
+            attemptsCount: examAttempts.length,
+            hasPassed,
+          };
+        });
       } else {
         exams = []; // No course assigned, no exams visible
       }
@@ -54,6 +67,24 @@ export async function listExamsHandler(req, res, next) {
 export async function getExamHandler(req, res, next) {
   try {
     const isAdmin = req.user?.role === "admin";
+
+    // Pre-flight check for students before giving questions
+    if (!isAdmin && req.user?.role === "student") {
+      const student = await Student.findOne({ userId: req.user.id }).select("_id course").lean();
+      if (!student) {
+        return res.status(404).json({ message: "Student profile not found" });
+      }
+
+      const attempts = await Attempt.find({ studentId: student._id, examId: req.params.id }).lean();
+      const hasPassed = attempts.some(a => a.status === "pass");
+      if (hasPassed) {
+        return res.status(409).json({ message: "You have already passed this exam." });
+      }
+      if (attempts.length >= 3) {
+        return res.status(403).json({ message: "Maximum attempts (3) reached for this exam." });
+      }
+    }
+
     const data = await getExamById(req.params.id, isAdmin);
     return res.json(data);
   } catch (err) {
@@ -79,7 +110,11 @@ export async function submitExamHandler(req, res, next) {
 
     let certificate = null;
     if (result.status === "pass") {
-      certificate = await generateCertificate(student._id, req.params.id);
+      try {
+        certificate = await generateCertificate(student._id, req.params.id);
+      } catch (certErr) {
+        console.error("Certificate generation error upon exam pass:", certErr);
+      }
     }
 
     return res.json({
