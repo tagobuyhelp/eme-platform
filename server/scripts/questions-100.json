@@ -1,0 +1,1302 @@
+[
+  {
+    "num": 1,
+    "question": "Which Excel function is used to look up a value in a table by searching vertically?",
+    "options": [
+      "HLOOKUP",
+      "VLOOKUP",
+      "XLOOKUP",
+      "INDEX"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "VLOOKUP"
+  },
+  {
+    "num": 2,
+    "question": "Which reference type in Excel locks both the row and the column when copied?",
+    "options": [
+      "Relative reference",
+      "Absolute reference ($A$1)",
+      "Mixed reference (A$1)",
+      "Dynamic reference"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Absolute reference ($A$1)"
+  },
+  {
+    "num": 3,
+    "question": "What is the primary purpose of Excel PivotTables?",
+    "options": [
+      "To write VBA scripts",
+      "To summarize, analyze, explore, and present large amounts of data",
+      "To record macros",
+      "To protect worksheets from editing"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To summarize, analyze, explore, and present large amounts of data"
+  },
+  {
+    "num": 4,
+    "question": "Which function should you use to return a value if an error occurs, or the calculation result otherwise?",
+    "options": [
+      "ISERROR",
+      "IFNA",
+      "IFERROR",
+      "ERROR.TYPE"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "IFERROR"
+  },
+  {
+    "num": 5,
+    "question": "Which chart type is most commonly used to show trends or changes in data over continuous time intervals?",
+    "options": [
+      "Pie Chart",
+      "Bar Chart",
+      "Line Chart",
+      "Scatter Plot"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Line Chart"
+  },
+  {
+    "num": 6,
+    "question": "Which Excel tool is used to restrict data input in a cell to a specific list, date range, or whole number?",
+    "options": [
+      "Conditional Formatting",
+      "Data Validation",
+      "Text-to-Columns",
+      "Goal Seek"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Data Validation"
+  },
+  {
+    "num": 7,
+    "question": "Which function combines the capabilities of both VLOOKUP and HLOOKUP, allowing search in any direction?",
+    "options": [
+      "INDEX/MATCH",
+      "XLOOKUP",
+      "LOOKUP",
+      "CHOOSE"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "XLOOKUP"
+  },
+  {
+    "num": 8,
+    "question": "What does the function COUNTA count in Excel?",
+    "options": [
+      "Only numeric values",
+      "Only blank cells",
+      "Non-blank cells (text, numbers, errors)",
+      "Logical values only"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Non-blank cells (text, numbers, errors)"
+  },
+  {
+    "num": 9,
+    "question": "Which feature allows you to separate text contained in a single cell into multiple columns based on a delimiter like a comma or space?",
+    "options": [
+      "Flash Fill",
+      "Text to Columns",
+      "Consolidate",
+      "Remove Duplicates"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Text to Columns"
+  },
+  {
+    "num": 10,
+    "question": "Which function is used to calculate the weighted average using arrays of scores and weights without manual intermediate multiplication columns?",
+    "options": [
+      "SUMIF",
+      "SUMPRODUCT",
+      "AVERAGEIF",
+      "AGGREGATE"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "SUMPRODUCT"
+  },
+  {
+    "num": 11,
+    "question": "How do you lock specific rows or columns so they remain visible while scrolling through a large spreadsheet?",
+    "options": [
+      "Split Cells",
+      "Group Rows",
+      "Freeze Panes",
+      "Protect Sheet"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Freeze Panes"
+  },
+  {
+    "num": 12,
+    "question": "Which function returns the position of a value within a specified range?",
+    "options": [
+      "FIND",
+      "MATCH",
+      "SEARCH",
+      "LOOKUP"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "MATCH"
+  },
+  {
+    "num": 13,
+    "question": "In Excel dynamic arrays, which function returns only unique values from a range?",
+    "options": [
+      "FILTER",
+      "SORT",
+      "UNIQUE",
+      "SEQUENCE"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "UNIQUE"
+  },
+  {
+    "num": 14,
+    "question": "What is the shortcut or menu path to remove duplicate rows from a dataset in Excel?",
+    "options": [
+      "Home > Format as Table",
+      "Data > Remove Duplicates",
+      "Review > Delete Sheet",
+      "Formulas > Trace Precedents"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Data > Remove Duplicates"
+  },
+  {
+    "num": 15,
+    "question": "Which conditional formatting option highlights cells based on user-defined numeric color gradients?",
+    "options": [
+      "Data Bars",
+      "Color Scales",
+      "Highlight Cells Rules",
+      "Icon Sets"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Color Scales"
+  },
+  {
+    "num": 16,
+    "question": "What is the purpose of named ranges in Excel?",
+    "options": [
+      "To encrypt data security layers",
+      "To make formulas easier to read and maintain",
+      "To automatically convert tables into charts",
+      "To increase physical file storage limits"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To make formulas easier to read and maintain"
+  },
+  {
+    "num": 17,
+    "question": "Which function counts the number of cells that meet a single specified criterion?",
+    "options": [
+      "COUNT",
+      "COUNTA",
+      "COUNTIF",
+      "COUNTBLANK"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "COUNTIF"
+  },
+  {
+    "num": 18,
+    "question": "What does the TRIM function do to text strings in Excel?",
+    "options": [
+      "Changes all letters to lowercase",
+      "Removes extra spaces, leaving only single spaces between words",
+      "Extracts characters from the left side of a string",
+      "Replaces old text with new text"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Removes extra spaces, leaving only single spaces between words"
+  },
+  {
+    "num": 19,
+    "question": "Which feature in Excel automatically detects patterns in your data and fills in values (e.g., splitting first and names) without requiring formulas?",
+    "options": [
+      "Flash Fill",
+      "Text to Columns",
+      "Data Validation",
+      "Consolidation"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "Flash Fill"
+  },
+  {
+    "num": 20,
+    "question": "Which Excel function is volatile and recalculates every time any change is made in the workbook?",
+    "options": [
+      "VLOOKUP",
+      "TODAY()",
+      "XLOOKUP",
+      "INDEX"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "TODAY()"
+  },
+  {
+    "num": 21,
+    "question": "Which SQL clause is used to filter records retrieved from a table?",
+    "options": [
+      "GROUP BY",
+      "ORDER BY",
+      "WHERE",
+      "HAVING"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "WHERE"
+  },
+  {
+    "num": 22,
+    "question": "Which join returns all records from the left table, and the matched records from the right table?",
+    "options": [
+      "INNER JOIN",
+      "LEFT JOIN (or LEFT OUTER JOIN)",
+      "RIGHT JOIN",
+      "FULL OUTER JOIN"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "LEFT JOIN (or LEFT OUTER JOIN)"
+  },
+  {
+    "num": 23,
+    "question": "What is the primary function of a SQL index?",
+    "options": [
+      "To enforce data constraints",
+      "To speed up data retrieval operations",
+      "To encrypt sensitive columns",
+      "To automatically normalize tables"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To speed up data retrieval operations"
+  },
+  {
+    "num": 24,
+    "question": "Which aggregate function returns the total sum of a numeric column?",
+    "options": [
+      "TOTAL()",
+      "SUM()",
+      "COUNT()",
+      "AGGREGATE()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "SUM()"
+  },
+  {
+    "num": 25,
+    "question": "What is the main difference between DELETE and TRUNCATE?",
+    "options": [
+      "DELETE is DDL, TRUNCATE is DML",
+      "DELETE can use a WHERE clause and logs individual row deletions; TRUNCATE removes all rows quickly without individual row logging",
+      "TRUNCATE cannot be rolled back under any circumstance",
+      "DELETE resets identity counters automatically"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "DELETE can use a WHERE clause and logs individual row deletions; TRUNCATE removes all rows quickly without individual row logging"
+  },
+  {
+    "num": 26,
+    "question": "Which constraint uniquely identifies each record in a database table and cannot contain NULL values?",
+    "options": [
+      "Foreign Key",
+      "Unique Constraint",
+      "Primary Key",
+      "Check Constraint"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Primary Key"
+  },
+  {
+    "num": 27,
+    "question": "What does ACID stand for in the context of database transactions?",
+    "options": [
+      "Atomicity, Consistency, Isolation, Durability",
+      "Accuracy, Control, Isolation, Data-integrity",
+      "Atomicity, Compatibility, Indexing, Durability",
+      "Association, Consistency, Integrity, Dependency"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "Atomicity, Consistency, Isolation, Durability"
+  },
+  {
+    "num": 28,
+    "question": "Which window function assigns a unique sequential integer to each row within a partition without gaps?",
+    "options": [
+      "RANK()",
+      "DENSE_RANK()",
+      "ROW_NUMBER()",
+      "NTILE()"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "ROW_NUMBER()"
+  },
+  {
+    "num": 29,
+    "question": "How do you combine the result sets of two queries while removing duplicate rows?",
+    "options": [
+      "UNION ALL",
+      "UNION",
+      "JOIN",
+      "MERGE"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "UNION"
+  },
+  {
+    "num": 30,
+    "question": "Which clause is used to filter data after an aggregation has been performed using GROUP BY?",
+    "options": [
+      "WHERE",
+      "HAVING",
+      "FILTER",
+      "LIMIT"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "HAVING"
+  },
+  {
+    "num": 31,
+    "question": "What is a SQL view?",
+    "options": [
+      "A physical table duplicated for backup purposes",
+      "A virtual table based on the result-set of an SQL statement",
+      "A stored procedure that executes on insert triggers",
+      "A temporary file stored in local RAM"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "A virtual table based on the result-set of an SQL statement"
+  },
+  {
+    "num": 32,
+    "question": "Which operator is used in a WHERE clause to search for a specified pattern containing wildcards?",
+    "options": [
+      "MATCHES",
+      "LIKE",
+      "CONTAINS",
+      "FIND"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "LIKE"
+  },
+  {
+    "num": 33,
+    "question": "What is the correct keyword used to rename a column or table temporarily in a query?",
+    "options": [
+      "AS",
+      "RENAME",
+      "ALIAS",
+      "TO"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "AS"
+  },
+  {
+    "num": 34,
+    "question": "Which SQL command language category includes statements like CREATE, ALTER, and DROP?",
+    "options": [
+      "DML (Data Manipulation Language)",
+      "DDL (Data Definition Language)",
+      "DCL (Data Control Language)",
+      "TCL (Transaction Control Language)"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "DDL (Data Definition Language)"
+  },
+  {
+    "num": 35,
+    "question": "How do you handle missing (NULL) values in a SQL select statement by substituting them with a default value?",
+    "options": [
+      "ISNULL() or COALESCE()",
+      "REPLACE_NULL()",
+      "IF_EMPTY()",
+      "FILLNA()"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "ISNULL() or COALESCE()"
+  },
+  {
+    "num": 36,
+    "question": "What is a subquery in SQL?",
+    "options": [
+      "A query executed outside the database server",
+      "A query nested inside another larger query",
+      "A backup query log file",
+      "An automated indexing routine"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "A query nested inside another larger query"
+  },
+  {
+    "num": 37,
+    "question": "Which system property ensures that concurrent transactions do not interfere with each other?",
+    "options": [
+      "Atomicity",
+      "Consistency",
+      "Isolation",
+      "Durability"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Isolation"
+  },
+  {
+    "num": 38,
+    "question": "Which clause is used in a SQL query to filter records based on specific criteria (e.g., finding all rows where sales > 500)?",
+    "options": [
+      "GROUP BY",
+      "ORDER BY",
+      "WHERE",
+      "HAVING"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "WHERE"
+  },
+  {
+    "num": 39,
+    "question": "If you want to return all matching and non-matching rows from both tables in a relational join, which join should you use?",
+    "options": [
+      "INNER JOIN",
+      "LEFT JOIN",
+      "FULL OUTER JOIN",
+      "CROSS JOIN"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "FULL OUTER JOIN"
+  },
+  {
+    "num": 40,
+    "question": "What is database normalization primarily used for?",
+    "options": [
+      "To increase query execution time by duplicating data",
+      "To reduce data redundancy and improve data integrity",
+      "To compress physical hard drive space",
+      "To secure user authentication tokens"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To reduce data redundancy and improve data integrity"
+  },
+  {
+    "num": 41,
+    "question": "What are the three primary data connection modes available in Power BI Desktop?",
+    "options": [
+      "Import, DirectQuery, Live Connection",
+      "Static, Dynamic, Real-time",
+      "Cloud, On-Premises, Hybrid",
+      "Connected, Offline, Synced"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "Import, DirectQuery, Live Connection"
+  },
+  {
+    "num": 42,
+    "question": "Which tool or language is used within Power Query for data transformation and shaping?",
+    "options": [
+      "DAX",
+      "M Language",
+      "VBA",
+      "Python"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "M Language"
+  },
+  {
+    "num": 43,
+    "question": "What is the main difference between calculated columns and measures in DAX?",
+    "options": [
+      "Calculated columns are evaluated during data refresh and stored in the model; measures are calculated dynamically at query time.",
+      "Measures are stored in physical tables; columns are never saved.",
+      "Calculated columns can only use aggregation functions.",
+      "Measures take up more disk space than calculated columns."
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "Calculated columns are evaluated during data refresh and stored in the model; measures are calculated dynamically at query time."
+  },
+  {
+    "num": 44,
+    "question": "Which DAX function modifies the filter context of an expression?",
+    "options": [
+      "FILTER()",
+      "CALCULATE()",
+      "RELATED()",
+      "ALL()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "CALCULATE()"
+  },
+  {
+    "num": 45,
+    "question": "What is the purpose of a Power BI Gateway?",
+    "options": [
+      "To design custom visual charts",
+      "To bridge data transfer between on-premises data sources and the cloud Power BI Service",
+      "To manage user licensing tiers",
+      "To compress semantic models automatically"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To bridge data transfer between on-premises data sources and the cloud Power BI Service"
+  },
+  {
+    "num": 46,
+    "question": "Which feature in Power BI Desktop allows you to load only new or updated data instead of a full reload?",
+    "options": [
+      "Quick Measures",
+      "Incremental Refresh",
+      "Performance Analyzer",
+      "Row-Level Security"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Incremental Refresh"
+  },
+  {
+    "num": 47,
+    "question": "What is the role of Power BI Apps in the Power BI Service?",
+    "options": [
+      "To write desktop DAX queries",
+      "To package and distribute curated collections of dashboards and reports to a broad audience",
+      "To connect mobile devices to Bluetooth beacons",
+      "To compile custom visual source code"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To package and distribute curated collections of dashboards and reports to a broad audience"
+  },
+  {
+    "num": 48,
+    "question": "How is Row-Level Security (RLS) primarily implemented in Power BI?",
+    "options": [
+      "By setting folder permissions in Windows Explorer",
+      "By defining roles and DAX filter expressions in Power BI Desktop, then assigning users in the Service",
+      "By configuring Azure firewall rules",
+      "By disabling guest user logins"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "By defining roles and DAX filter expressions in Power BI Desktop, then assigning users in the Service"
+  },
+  {
+    "num": 49,
+    "question": "What does the Power BI Performance Analyzer do?",
+    "options": [
+      "Automates data cleaning routines",
+      "Identifies and inspects the loading time and performance bottlenecks of individual visuals and DAX queries",
+      "Predicts future hardware cost scaling",
+      "Monitors active user connection counts"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Identifies and inspects the loading time and performance bottlenecks of individual visuals and DAX queries"
+  },
+  {
+    "num": 50,
+    "question": "What is the purpose of bookmarks in Power BI reports?",
+    "options": [
+      "To link external web pages",
+      "To capture specific report states, filters, and visibility views for interactive storytelling",
+      "To bookmark favorite DAX formulas",
+      "To save backup versions of semantic models"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To capture specific report states, filters, and visibility views for interactive storytelling"
+  },
+  {
+    "num": 51,
+    "question": "Which DAX function removes all filters from a table or column context?",
+    "options": [
+      "CLEAR()",
+      "ALL()",
+      "REMOVEFILTERS()",
+      "UNFILTER()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "ALL()"
+  },
+  {
+    "num": 52,
+    "question": "What are Power BI Dataflows?",
+    "options": [
+      "Cloud-based ETL processes hosted in the Power BI service for reusable data preparation",
+      "Real-time streaming data packets",
+      "Visual workflow diagram builders for reports",
+      "Automated email alert sequences"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "Cloud-based ETL processes hosted in the Power BI service for reusable data preparation"
+  },
+  {
+    "num": 53,
+    "question": "Which connection mode keeps data residing entirely in the source database without copying it into Power BI?",
+    "options": [
+      "Import",
+      "DirectQuery",
+      "Cached Mode",
+      "Snapshot Mode"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "DirectQuery"
+  },
+  {
+    "num": 54,
+    "question": "What is the function of the RELATED() DAX function?",
+    "options": [
+      "Returns a related value from another table based on a many-to-one or one-to-one relationship",
+      "Creates a new table relationship dynamically",
+      "Counts duplicate keys across tables",
+      "Filters out unrelated rows"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "Returns a related value from another table based on a many-to-one or one-to-one relationship"
+  },
+  {
+    "num": 55,
+    "question": "What is the main difference between Import mode and DirectQuery mode?",
+    "options": [
+      "DirectQuery stores data in the Power BI cache; Import queries the source live.",
+      "Import caches data locally in-memory; DirectQuery queries the underlying data source live for every request.",
+      "Import only supports Excel files; DirectQuery only supports SQL databases.",
+      "There is no performance difference between the two."
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Import caches data locally in-memory; DirectQuery queries the underlying data source live for every request."
+  },
+  {
+    "num": 56,
+    "question": "What is the primary use of Paginated Reports in Power BI?",
+    "options": [
+      "To create interactive mobile dashboards",
+      "To generate highly-formatted, pixel-perfect printable documents like invoices or operational statements",
+      "To paginate large DAX query results in text logs",
+      "To split long data tables into multiple tabs"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To generate highly-formatted, pixel-perfect printable documents like invoices or operational statements"
+  },
+  {
+    "num": 57,
+    "question": "What are calculation groups in Power BI used for?",
+    "options": [
+      "To group visual charts into folders",
+      "To reduce the number of measures needed by creating reusable calculation logic modifiers",
+      "To organize user security groups",
+      "To merge multiple data sources into one"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To reduce the number of measures needed by creating reusable calculation logic modifiers"
+  },
+  {
+    "num": 58,
+    "question": "Which Power BI service component automates the deployment lifecycle across development, test, and production workspaces?",
+    "options": [
+      "Deployment Pipelines",
+      "Release Manager",
+      "Workspace Sync",
+      "Promotion Workflows"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "Deployment Pipelines"
+  },
+  {
+    "num": 59,
+    "question": "What is the primary difference between a Scheduled Refresh and a Manual Refresh in Power BI?",
+    "options": [
+      "Manual refresh runs in the background automatically; scheduled refresh requires user clicks.",
+      "Scheduled refresh automates updates at specified intervals without manual intervention, while manual refresh is a one-time on-demand user action.",
+      "Scheduled refresh only works for local Excel files.",
+      "Manual refresh bypasses gateway requirements completely."
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Scheduled refresh automates updates at specified intervals without manual intervention, while manual refresh is a one-time on-demand user action."
+  },
+  {
+    "num": 60,
+    "question": "What is the purpose of sensitivity labels in Power BI?",
+    "options": [
+      "To categorize visuals by color themes",
+      "To classify and protect data according to organizational security and compliance policies",
+      "To label user skill levels in workspaces",
+      "To tag data refresh errors"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To classify and protect data according to organizational security and compliance policies"
+  },
+  {
+    "num": 61,
+    "question": "Which Python library is foundational for data manipulation and analysis, providing DataFrame structures?",
+    "options": [
+      "NumPy",
+      "Pandas",
+      "Matplotlib",
+      "SciPy"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Pandas"
+  },
+  {
+    "num": 62,
+    "question": "What function is used in Pandas to inspect the first few rows of a DataFrame?",
+    "options": [
+      "df.top()",
+      "df.head()",
+      "df.start()",
+      "df.first()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "df.head()"
+  },
+  {
+    "num": 63,
+    "question": "How do you check for missing or null values across a Pandas DataFrame?",
+    "options": [
+      "df.missing()",
+      "df.isnull() or df.isna()",
+      "df.has_null()",
+      "df.check_na()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "df.isnull() or df.isna()"
+  },
+  {
+    "num": 64,
+    "question": "Which Pandas method is used to combine two DataFrames based on a common column or index (similar to SQL joins)?",
+    "options": [
+      "df.concat()",
+      "df.merge()",
+      "df.join_table()",
+      "df.blend()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "df.merge()"
+  },
+  {
+    "num": 65,
+    "question": "Which Python library is primarily used for creating static, animated, and interactive visualizations?",
+    "options": [
+      "Pandas",
+      "Matplotlib",
+      "Scikit-Learn",
+      "Statsmodels"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Matplotlib"
+  },
+  {
+    "num": 66,
+    "question": "What is the data structure in Pandas that represents a single one-dimensional labeled array?",
+    "options": [
+      "Matrix",
+      "Series",
+      "Vector",
+      "Tuple"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Series"
+  },
+  {
+    "num": 67,
+    "question": "How do you drop duplicate rows from a Pandas DataFrame named df?",
+    "options": [
+      "df.drop_duplicates()",
+      "df.remove_dups()",
+      "df.unique()",
+      "df.filter_duplicates()"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "df.drop_duplicates()"
+  },
+  {
+    "num": 68,
+    "question": "Which function from Pandas is used to read comma-separated values files into a DataFrame?",
+    "options": [
+      "pd.load_csv()",
+      "pd.read_csv()",
+      "pd.import_csv()",
+      "pd.open_csv()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "pd.read_csv()"
+  },
+  {
+    "num": 69,
+    "question": "How can you fill missing values in a Pandas DataFrame column with a specific value like 0?",
+    "options": [
+      "df.fill(0)",
+      "df.fillna(0)",
+      "df.replace_na(0)",
+      "df.impute(0)"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "df.fillna(0)"
+  },
+  {
+    "num": 70,
+    "question": "What does the groupby() method do in Pandas?",
+    "options": [
+      "Sorts DataFrame rows alphabetically",
+      "Splits data into groups based on criteria for aggregate calculations",
+      "Merges two separate files together",
+      "Filters out rows containing text data"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Splits data into groups based on criteria for aggregate calculations"
+  },
+  {
+    "num": 71,
+    "question": "Which library is widely used in Python for advanced scientific computing and multi-dimensional array operations?",
+    "options": [
+      "NumPy",
+      "Pygame",
+      "BeautifulSoup",
+      "Flask"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "NumPy"
+  },
+  {
+    "num": 72,
+    "question": "What is the output type of the expression type(df) when df is a Pandas DataFrame?",
+    "options": [
+      "<class 'list'>",
+      "<class 'pandas.core.frame.DataFrame'>",
+      "<class 'numpy.ndarray'>",
+      "<class 'dict'>"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "<class 'pandas.core.frame.DataFrame'>"
+  },
+  {
+    "num": 73,
+    "question": "Which function is used to calculate descriptive statistics (like mean, std, min, max) for numerical columns in a Pandas DataFrame?",
+    "options": [
+      "df.summary()",
+      "df.describe()",
+      "df.statistics()",
+      "df.info()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "df.describe()"
+  },
+  {
+    "num": 74,
+    "question": "How do you select a specific column named 'Sales' from a DataFrame df?",
+    "options": [
+      "df.select('Sales')",
+      "df['Sales']",
+      "df.Sales (also works, but bracket notation is robust) / df['Sales']",
+      "Both B and C"
+    ],
+    "correctAnswer": 3,
+    "answerLetter": "D",
+    "answerText": "Both B and C"
+  },
+  {
+    "num": 75,
+    "question": "What is the purpose of the apply() function in Pandas?",
+    "options": [
+      "To install external packages",
+      "To apply a function along an axis of the DataFrame",
+      "To apply conditional formatting to a CSV file",
+      "To save a DataFrame to disk"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "To apply a function along an axis of the DataFrame"
+  },
+  {
+    "num": 76,
+    "question": "When handling missing data in a Pandas DataFrame, which method is used to remove rows or columns with missing (NaN) values?",
+    "options": [
+      "df.drop_na()",
+      "df.dropna()",
+      "df.remove_missing()",
+      "df.clear_na()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "df.dropna()"
+  },
+  {
+    "num": 77,
+    "question": "How do you rename columns in a Pandas DataFrame?",
+    "options": [
+      "df.columns = [...] or df.rename(columns={...})",
+      "df.set_name(...)",
+      "df.modify_headers(...)",
+      "df.change_columns(...)"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "df.columns = [...] or df.rename(columns={...})"
+  },
+  {
+    "num": 78,
+    "question": "What does the axis=1 parameter typically signify in Pandas operations like drop() or mean()?",
+    "options": [
+      "Operations along rows (horizontal)",
+      "Operations along columns (vertical)",
+      "The primary index axis",
+      "A recursive loop toggle"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Operations along columns (vertical)"
+  },
+  {
+    "num": 79,
+    "question": "Which function is used to pivot a DataFrame, reshaping data based on column values?",
+    "options": [
+      "df.rotate()",
+      "df.pivot() or df.pivot_table()",
+      "df.reshape()",
+      "df.transpose()"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "df.pivot() or df.pivot_table()"
+  },
+  {
+    "num": 80,
+    "question": "How do you export a Pandas DataFrame to an Excel file?",
+    "options": [
+      "df.to_excel('filename.xlsx')",
+      "df.export_excel(...)",
+      "df.write_excel(...)",
+      "df.save_as_excel(...)"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "df.to_excel('filename.xlsx')"
+  },
+  {
+    "num": 81,
+    "question": "Which statistical measure represents the middle value in a sorted dataset?",
+    "options": [
+      "Mean",
+      "Median",
+      "Mode",
+      "Standard Deviation"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Median"
+  },
+  {
+    "num": 82,
+    "question": "What is the term for the value that appears most frequently in a dataset?",
+    "options": [
+      "Mean",
+      "Median",
+      "Mode",
+      "Range"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Mode"
+  },
+  {
+    "num": 83,
+    "question": "What does standard deviation measure?",
+    "options": [
+      "The central tendency of data",
+      "The amount of variation or dispersion of a set of data values",
+      "The asymmetry of a probability distribution",
+      "The linear relationship between two variables"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "The amount of variation or dispersion of a set of data values"
+  },
+  {
+    "num": 84,
+    "question": "If a distribution has a long tail extending to the right, what type of skewness does it exhibit?",
+    "options": [
+      "Negative skew",
+      "Positive skew (right-skewed)",
+      "Zero skew",
+      "Symmetric skew"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Positive skew (right-skewed)"
+  },
+  {
+    "num": 85,
+    "question": "What is the correlation coefficient (e.g., Pearson's r) range?",
+    "options": [
+      "0 to 100",
+      "-1 to +1",
+      "-infty to +infty",
+      "0 to 1"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "-1 to +1"
+  },
+  {
+    "num": 86,
+    "question": "What does a correlation coefficient of 0 indicate between two variables?",
+    "options": [
+      "Perfect positive linear relationship",
+      "Perfect negative linear relationship",
+      "No linear relationship",
+      "Nonlinear dependency"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "No linear relationship"
+  },
+  {
+    "num": 87,
+    "question": "What is the difference between the maximum and minimum values in a dataset called?",
+    "options": [
+      "Variance",
+      "Range",
+      "Interquartile Range",
+      "Standard Error"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Range"
+  },
+  {
+    "num": 88,
+    "question": "In a normal distribution, approximately what percentage of data falls within one standard deviation (1sigma) of the mean?",
+    "options": [
+      "50%",
+      "68%",
+      "95%",
+      "99.7%"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "68%"
+  },
+  {
+    "num": 89,
+    "question": "What is the Interquartile Range (IQR) used to measure?",
+    "options": [
+      "Central tendency",
+      "Statistical spread/dispersion, defined as the difference between the 75th and 25th percentiles",
+      "Rate of change over time",
+      "Probability of outliers"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Statistical spread/dispersion, defined as the difference between the 75th and 25th percentiles"
+  },
+  {
+    "num": 90,
+    "question": "Which measure of central tendency is most affected by extreme outliers?",
+    "options": [
+      "Median",
+      "Mode",
+      "Mean",
+      "Interquartile range"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Mean"
+  },
+  {
+    "num": 91,
+    "question": "What is the median of the following dataset: 3, 7, 9, 12, 15?",
+    "options": [
+      "7",
+      "9",
+      "10",
+      "12"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "9"
+  },
+  {
+    "num": 92,
+    "question": "What is variance?",
+    "options": [
+      "The square root of the standard deviation",
+      "The average of the squared differences from the mean",
+      "The median absolute deviation",
+      "The difference between the mode and mean"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "The average of the squared differences from the mean"
+  },
+  {
+    "num": 93,
+    "question": "Which type of data consists of numerical values where arithmetic operations like addition and subtraction are meaningful, but has no true absolute zero (e.g., Temperature in Celsius)?",
+    "options": [
+      "Nominal data",
+      "Ordinal data",
+      "Interval data",
+      "Ratio data"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Interval data"
+  },
+  {
+    "num": 94,
+    "question": "What does a box plot (box-and-whisker plot) primarily help visualize?",
+    "options": [
+      "Time series trends",
+      "Data distribution spread, median, quartiles, and potential outliers",
+      "Exact frequency counts of categorical variables",
+      "Bivariate linear regression slopes"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Data distribution spread, median, quartiles, and potential outliers"
+  },
+  {
+    "num": 95,
+    "question": "If a dataset has a few extremely high values, the distribution is likely to be:",
+    "options": [
+      "Positively skewed (right-skewed)",
+      "Negatively skewed (left-skewed)",
+      "Perfectly symmetrical",
+      "Uniform"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "(Positively skewed / right-skewed)"
+  },
+  {
+    "num": 96,
+    "question": "What is the mode of the following dataset: 4, 2, 5, 2, 7, 9, 2, 5?",
+    "options": [
+      "5",
+      "7",
+      "2",
+      "4.25"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "2"
+  },
+  {
+    "num": 97,
+    "question": "Which of the following is a measure of variability (spread)?",
+    "options": [
+      "Mean",
+      "Median",
+      "Variance",
+      "Mode"
+    ],
+    "correctAnswer": 2,
+    "answerLetter": "C",
+    "answerText": "Variance"
+  },
+  {
+    "num": 98,
+    "question": "Which statistical metric measures the peaked ness or flatness of a distribution relative to a normal distribution?",
+    "options": [
+      "Skewness",
+      "Kurtosis",
+      "Variance",
+      "Covariance"
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "Kurtosis"
+  },
+  {
+    "num": 99,
+    "question": "What is the difference between a population and a sample?",
+    "options": [
+      "A population is a subset of a sample.",
+      "A population includes all members of a defined group, while a sample is a subset drawn from that population.",
+      "A sample is always larger than a population.",
+      "There is no difference in statistical definitions."
+    ],
+    "correctAnswer": 1,
+    "answerLetter": "B",
+    "answerText": "A population includes all members of a defined group, while a sample is a subset drawn from that population."
+  },
+  {
+    "num": 100,
+    "question": "What is data cleaning (or data scrubbing) in the data analysis process?",
+    "options": [
+      "The process of detecting and correcting corrupt, inaccurate, or duplicate records from a dataset",
+      "The act of deleting all numerical data to keep only text",
+      "The process of converting qualitative data into audio format",
+      "Generating random numbers to fill out missing surveys"
+    ],
+    "correctAnswer": 0,
+    "answerLetter": "A",
+    "answerText": "The process of detecting and correcting corrupt, inaccurate, or duplicate records from a dataset"
+  }
+]
