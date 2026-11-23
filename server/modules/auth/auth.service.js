@@ -60,33 +60,43 @@ export async function ensureDefaultUsers() {
   return created;
 }
 
-// ─── Admin: email + password registration ────────────────────────────
+// ─── Admin: email + password registration (admin-only) ───────────────
 
 export async function registerUser(data) {
   const name = data?.name;
   const email = data?.email;
   const password = data?.password;
+  const role = data?.role || "admin";
 
-  if (!name || !email || !password) {
-    throw createHttpError(400, "name, email, and password are required");
+  // Email is required for email+password accounts (admin accounts)
+  if (!name || !password) {
+    throw createHttpError(400, "name and password are required");
   }
 
-  const normalizedEmail = String(email).trim().toLowerCase();
-
-  const existing = await User.findOne({ email: normalizedEmail }).lean();
-  if (existing) {
-    throw createHttpError(409, "User already exists");
+  // If email provided, check for duplicate
+  if (email) {
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const existing = await User.findOne({ email: normalizedEmail }).lean();
+    if (existing) {
+      throw createHttpError(409, "An account with this email already exists");
+    }
+    const hashedPassword = await bcrypt.hash(String(password), 12);
+    const user = await User.create({
+      name: String(name).trim(),
+      email: normalizedEmail,
+      password: hashedPassword,
+      role,
+    });
+    return user;
   }
 
+  // No email: create account without email (phone-based students won't use this path)
   const hashedPassword = await bcrypt.hash(String(password), 12);
-
   const user = await User.create({
     name: String(name).trim(),
-    email: normalizedEmail,
     password: hashedPassword,
-    role: "student",
+    role,
   });
-
   return user;
 }
 

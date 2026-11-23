@@ -2,11 +2,12 @@ import { Router } from "express";
 
 import { login, register, updateMe, changePassword, sendOtp, verifyOtp, verifyWidget } from "./auth.controller.js";
 import protect from "../../core/middleware/authMiddleware.js";
+import { authorize } from "../../core/middleware/roleMiddleware.js";
 
 const router = Router();
 
-// Admin: email + password
-router.post("/register", register);
+// Admin: email + password (register is admin-only to prevent public sign-ups)
+router.post("/register", protect, authorize("admin"), register);
 router.post("/login", login);
 
 // Student: phone + OTP

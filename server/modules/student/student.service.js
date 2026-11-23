@@ -24,7 +24,7 @@ export async function createStudent(data, userId) {
     throw createHttpError(400, "fullName is required");
   }
 
-  const user = await User.findById(userId).select("email").lean();
+  const user = await User.findById(userId).select("email phone").lean();
   if (!user) {
     throw createHttpError(404, "User not found");
   }
@@ -37,8 +37,9 @@ export async function createStudent(data, userId) {
   const student = await Student.create({
     userId,
     fullName: String(fullName).trim(),
-    email: String(user.email).trim().toLowerCase(),
-    phone: data?.phone ? String(data.phone).trim() : undefined,
+    // email is optional — OTP-only students may not have one
+    email: user.email ? String(user.email).trim().toLowerCase() : (data?.email ? String(data.email).trim().toLowerCase() : ""),
+    phone: data?.phone ? String(data.phone).trim() : (user.phone ? String(user.phone).trim() : undefined),
     course: data?.course ? String(data.course).trim() : undefined,
     documents: Array.isArray(data?.documents) ? data.documents : [],
     status: data?.status || "pending",
