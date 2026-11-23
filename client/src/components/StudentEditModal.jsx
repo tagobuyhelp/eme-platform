@@ -179,35 +179,38 @@ function StudentEditModal({
               }
             />
             <FormInput
-              label="Email Address"
+              label="Email Address (optional)"
               type="email"
               disabled={!isCreating}
               value={editingStudent.email || ""}
               onChange={(event) =>
                 setEditingStudent((previous) => ({ ...previous, email: event.target.value }))
               }
+              placeholder="Leave blank for OTP-only login"
             />
           </div>
 
-          {/* Phone & Status / Password */}
+          {/* Phone & Status */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormInput
-              label="Mobile Phone"
+              label="Mobile Phone (required)"
+              required
               value={editingStudent.phone || ""}
               onChange={(event) =>
                 setEditingStudent((previous) => ({ ...previous, phone: event.target.value }))
               }
+              placeholder="10-digit mobile number"
             />
             {isCreating ? (
-              <FormInput
-                label="Initial Password"
-                type="password"
-                value={editingStudent.password || ""}
-                onChange={(event) =>
-                  setEditingStudent((previous) => ({ ...previous, password: event.target.value }))
-                }
-                placeholder="Defaults to eme12345"
-              />
+              <div className="flex flex-col justify-end">
+                <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  Login Method
+                </span>
+                <div className="rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-950/30 px-4 py-3 text-sm font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-2">
+                  <span className="material-icons text-[18px]">phone_android</span>
+                  Mobile OTP (auto)
+                </div>
+              </div>
             ) : (
               <div className="block">
                 <span className="mb-2 block text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">

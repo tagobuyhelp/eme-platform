@@ -91,7 +91,6 @@ function Students() {
       fullName: "",
       email: "",
       phone: "",
-      password: "",
       course: "",
       status: "active",
       studentId: "",
@@ -162,28 +161,20 @@ function Students() {
 
     try {
       setSaving(true);
+      setError("");
       if (isCreating) {
-        // Step 1: Create Auth User
-        const authRes = await api.post("/auth/register", {
-          name: editingStudent.fullName,
-          email: editingStudent.email,
-          password: editingStudent.password || "eme12345",
-          role: "student"
-        });
-        
-        // Step 2: Create Student Profile
-        const newStudentData = {
-          userId: authRes.data.user.id,
+        // Single atomic call — creates User + Student profile server-side.
+        // Phone is the primary identifier; email is optional.
+        const response = await api.post("/students/create-with-user", {
           fullName: editingStudent.fullName,
-          email: editingStudent.email,
           phone: editingStudent.phone,
+          email: editingStudent.email || undefined,
           course: editingStudent.course,
           status: editingStudent.status,
           studentId: editingStudent.studentId || undefined,
-          profilePhoto: editingStudent.profilePhoto,
+          profilePhoto: editingStudent.profilePhoto || undefined,
           documents: editingStudent.documents,
-        };
-        const response = await api.post("/students", newStudentData);
+        });
         setStudents((prev) => [response.data.student, ...prev]);
         setSelectedStudent(response.data.student);
         setIsCreating(false);

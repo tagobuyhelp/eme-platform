@@ -246,8 +246,92 @@ export async function importStudentsFromExcelBuffer(fileBuffer) {
   };
 }
 
+/**
+ * Admin: atomically create a User + Student profile in one operation.
+ * Phone is the primary identifier. Email and password are optional.
+ * If a User with the same phone already exists, reuses them (upsert).
+ */
+export async function createStudentWithUser(data) {
+  const { fullName, phone, email, password, course, status, studentId, profilePhoto, documents } = data || {};
+
+  if (!fullName) throw createHttpError(400, "fullName is required");
+  if (!phone) throw createHttpError(400, "phone (mobile number) is required");
+
+  // Normalize phone to 10-digit
+  const cleanPhone = String(phone).replace(/\D/g, "");
+  const normalizedPhone = cleanPhone.length === 12 && cleanPhone.startsWith("91")
+    ? cleanPhone.slice(2)
+    : cleanPhone;
+  if (normalizedPhone.length !== 10) {
+    throw createHttpError(400, "Please enter a valid 10-digit mobile number");
+  }
+
+  const normalizedEmail = email ? String(email).trim().toLowerCase() : null;
+
+  // Check for email conflict only if email was provided
+  if (normalizedEmail) {
+    const emailConflict = await User.findOne({ email: normalizedEmail }).lean();
+    if (emailConflict) {
+      throw createHttpError(409, `Email "${normalizedEmail}" is already registered. Leave email blank or use a different one.`);
+    }
+  }
+
+  // Find or create the User record (keyed by phone)
+  let user = await User.findOne({ phone: normalizedPhone });
+  if (!user) {
+    const bcrypt = await import("bcryptjs").then((m) => m.default);
+    const hashedPassword = password
+      ? await bcrypt.hash(String(password), 12)
+      : await bcrypt.hash("eme12345", 12);
+
+    user = await User.create({
+      name: String(fullName).trim(),
+      phone: normalizedPhone,
+      email: normalizedEmail || undefined,
+      password: hashedPassword,
+      role: "student",
+    });
+  } else {
+    // User already exists (phone-based) — update name if changed
+    let changed = false;
+    if (user.name !== String(fullName).trim()) { user.name = String(fullName).trim(); changed = true; }
+    if (normalizedEmail && !user.email) { user.email = normalizedEmail; changed = true; }
+    if (changed) await user.save();
+  }
+
+  // Find or create Student profile
+  let student = await Student.findOne({ userId: user._id });
+  if (!student) {
+    student = await Student.create({
+      userId: user._id,
+      fullName: String(fullName).trim(),
+      email: normalizedEmail || user.email || "",
+      phone: normalizedPhone,
+      course: course ? String(course).trim() : undefined,
+      status: status || "active",
+      studentId: studentId ? String(studentId).trim() : `EME-${normalizedPhone.slice(-6)}`,
+      profilePhoto: profilePhoto || undefined,
+      documents: Array.isArray(documents) ? documents : [],
+    });
+  } else {
+    // Update existing student profile
+    student.fullName = String(fullName).trim();
+    if (normalizedEmail) student.email = normalizedEmail;
+    if (course) student.course = String(course).trim();
+    if (status) student.status = status;
+    if (studentId) student.studentId = String(studentId).trim();
+    if (profilePhoto) student.profilePhoto = profilePhoto;
+    if (Array.isArray(documents)) student.documents = documents;
+    student.phone = normalizedPhone;
+    await student.save();
+  }
+
+  return { user: user.toObject(), student: student.toObject() };
+}
+
 export default {
   createStudent,
+  createStudentWithUser,
   getAllStudents,
   getStudentById,
   updateStudent,

@@ -5,6 +5,7 @@ import { authorize } from "../../core/middleware/roleMiddleware.js";
 
 import {
   createStudentProfile,
+  createStudentWithUserProfile,
   getStudent,
   getMe,
   listStudents,
@@ -38,6 +39,7 @@ const memoryUpload = multer({ storage: multer.memoryStorage() });
 const router = Router();
 
 router.post("/", protect, authorize("admin", "student"), createStudentProfile);
+router.post("/create-with-user", protect, authorize("admin"), createStudentWithUserProfile);
 router.get("/", protect, authorize("admin"), listStudents);
 router.get("/me", protect, authorize("student"), getMe);
 router.post("/import-excel", protect, authorize("admin"), memoryUpload.single("file"), importExcelCandidates);

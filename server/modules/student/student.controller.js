@@ -1,6 +1,7 @@
 import Student from "./student.model.js";
 import {
   createStudent,
+  createStudentWithUser,
   getAllStudents,
   getStudentById,
   updateStudent,
@@ -157,6 +158,15 @@ export async function previewDocument(req, res, next) {
     });
   } catch (err) {
     next(err);
+  }
+}
+
+export async function createStudentWithUserProfile(req, res, next) {
+  try {
+    const result = await createStudentWithUser(req.body);
+    return res.status(201).json({ message: "Student created successfully", ...result });
+  } catch (err) {
+    return next(err);
   }
 }
 
