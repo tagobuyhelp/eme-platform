@@ -3,7 +3,16 @@ import { loginUser, registerUser, sendPhoneOtp, verifyPhoneOtp, verifyMsg91Widge
 export async function register(req, res, next) {
   try {
     const user = await registerUser(req.body);
-    return res.status(201).json({ message: "User registered successfully", user });
+    const userObj = user && user.toObject ? user.toObject() : { ...user };
+    const id = (userObj._id ? userObj._id.toString() : userObj.id) || "";
+    return res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        ...userObj,
+        id,
+        _id: id,
+      },
+    });
   } catch (err) {
     return next(err);
   }

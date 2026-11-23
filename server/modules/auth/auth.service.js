@@ -66,38 +66,58 @@ export async function registerUser(data) {
   const name = data?.name;
   const email = data?.email;
   const password = data?.password;
-  const role = data?.role || "admin";
+  const phone = data?.phone;
+  const role = data?.role || "student";
 
-  // Email is required for email+password accounts (admin accounts)
-  if (!name || !password) {
-    throw createHttpError(400, "name and password are required");
+  if (!name) {
+    throw createHttpError(400, "name is required");
   }
 
-  // If email provided, check for duplicate
+  // If email provided, check for existing user
   if (email) {
     const normalizedEmail = String(email).trim().toLowerCase();
-    const existing = await User.findOne({ email: normalizedEmail }).lean();
+    const existing = await User.findOne({ email: normalizedEmail });
     if (existing) {
-      throw createHttpError(409, "An account with this email already exists");
+      const existingObj = existing.toObject ? existing.toObject() : existing;
+      const idStr = (existingObj._id || existing._id).toString();
+      return { ...existingObj, id: idStr, _id: idStr };
     }
-    const hashedPassword = await bcrypt.hash(String(password), 12);
+
+    const hashedPassword = password ? await bcrypt.hash(String(password), 12) : await bcrypt.hash("eme12345", 12);
     const user = await User.create({
       name: String(name).trim(),
       email: normalizedEmail,
+      phone: phone ? String(phone).replace(/\D/g, "").slice(-10) : undefined,
       password: hashedPassword,
       role,
     });
-    return user;
+    const userObj = user.toObject();
+    const idStr = user._id.toString();
+    return { ...userObj, id: idStr, _id: idStr };
   }
 
-  // No email: create account without email (phone-based students won't use this path)
-  const hashedPassword = await bcrypt.hash(String(password), 12);
+  // If phone provided without email, check for existing user
+  if (phone) {
+    const cleanPhone = String(phone).replace(/\D/g, "").slice(-10);
+    const existing = await User.findOne({ phone: cleanPhone });
+    if (existing) {
+      const existingObj = existing.toObject ? existing.toObject() : existing;
+      const idStr = (existingObj._id || existing._id).toString();
+      return { ...existingObj, id: idStr, _id: idStr };
+    }
+  }
+
+  // No email: create account without email
+  const hashedPassword = password ? await bcrypt.hash(String(password), 12) : await bcrypt.hash("eme12345", 12);
   const user = await User.create({
     name: String(name).trim(),
+    phone: phone ? String(phone).replace(/\D/g, "").slice(-10) : undefined,
     password: hashedPassword,
     role,
   });
-  return user;
+  const userObj = user.toObject();
+  const idStr = user._id.toString();
+  return { ...userObj, id: idStr, _id: idStr };
 }
 
 // ─── Admin: email + password login ───────────────────────────────────

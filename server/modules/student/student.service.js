@@ -17,25 +17,53 @@ function ensureObjectId(value, fieldName) {
 }
 
 export async function createStudent(data, userId) {
-  ensureObjectId(userId, "userId");
+  let resolvedUserId = userId || data?.userId || data?._id;
+
+  // If userId is still missing, try looking up the user by phone or email
+  if (!resolvedUserId && (data?.phone || data?.email)) {
+    const query = [];
+    if (data?.phone) {
+      const cleanPhone = String(data.phone).replace(/\D/g, "").slice(-10);
+      if (cleanPhone.length === 10) query.push({ phone: cleanPhone });
+    }
+    if (data?.email) query.push({ email: String(data.email).trim().toLowerCase() });
+    if (query.length > 0) {
+      const foundUser = await User.findOne({ $or: query }).lean();
+      if (foundUser) {
+        resolvedUserId = foundUser._id;
+      }
+    }
+  }
+
+  ensureObjectId(resolvedUserId, "userId");
 
   const fullName = data?.fullName;
   if (!fullName) {
     throw createHttpError(400, "fullName is required");
   }
 
-  const user = await User.findById(userId).select("email phone").lean();
+  const user = await User.findById(resolvedUserId).select("email phone").lean();
   if (!user) {
     throw createHttpError(404, "User not found");
   }
 
-  const existing = await Student.findOne({ userId }).lean();
+  const existing = await Student.findOne({ userId: resolvedUserId });
   if (existing) {
-    throw createHttpError(409, "Student profile already exists for this user");
+    // If student profile already exists, update and return it seamlessly
+    existing.fullName = String(fullName).trim();
+    if (data?.email) existing.email = String(data.email).trim().toLowerCase();
+    if (data?.phone) existing.phone = String(data.phone).trim();
+    if (data?.course) existing.course = String(data.course).trim();
+    if (data?.status) existing.status = data.status;
+    if (data?.studentId) existing.studentId = String(data.studentId).trim();
+    if (data?.profilePhoto) existing.profilePhoto = data.profilePhoto;
+    if (Array.isArray(data?.documents)) existing.documents = data.documents;
+    await existing.save();
+    return existing.toObject();
   }
 
   const student = await Student.create({
-    userId,
+    userId: resolvedUserId,
     fullName: String(fullName).trim(),
     // email is optional — OTP-only students may not have one
     email: user.email ? String(user.email).trim().toLowerCase() : (data?.email ? String(data.email).trim().toLowerCase() : ""),

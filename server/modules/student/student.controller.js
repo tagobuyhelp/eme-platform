@@ -18,7 +18,16 @@ function ensureOwnershipOrAdmin(reqUser, student) {
 
 export async function createStudentProfile(req, res, next) {
   try {
-    const userId = req.user?.role === "admin" ? req.body?.userId : req.user?.id;
+    let userId = req.user?.role === "admin"
+      ? (req.body?.userId || req.body?._id || req.body?.user?._id || req.body?.user?.id)
+      : req.user?.id;
+
+    // If admin is creating and userId is not directly supplied, or invalid, use atomic create
+    if (!userId && req.user?.role === "admin") {
+      const result = await createStudentWithUser(req.body);
+      return res.status(201).json({ message: "Student profile created", student: result.student, user: result.user });
+    }
+
     const student = await createStudent(req.body, userId);
     return res.status(201).json({ message: "Student profile created", student });
   } catch (err) {
