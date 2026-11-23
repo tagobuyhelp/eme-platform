@@ -223,7 +223,7 @@ function Exam() {
 
   return (
     <div 
-      className="space-y-4 md:space-y-6 select-none pb-24 lg:pb-6"
+      className="space-y-4 md:space-y-6 select-none pb-36 lg:pb-6"
       onCopy={(e) => { e.preventDefault(); alert("Copying is disabled during the exam."); }}
       onCut={(e) => { e.preventDefault(); alert("Cutting is disabled during the exam."); }}
       onPaste={(e) => { e.preventDefault(); alert("Pasting is disabled during the exam."); }}
@@ -440,7 +440,7 @@ function Exam() {
       </div>
 
       {/* Sticky Bottom Control Navigation Bar for Mobile View */}
-      <div className="lg:hidden fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 p-3 z-40 flex items-center justify-between gap-2 shadow-2xl">
+      <div className="lg:hidden fixed bottom-16 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 p-3 z-50 flex items-center justify-between gap-2 shadow-2xl">
         <button
           type="button"
           onClick={() => setCurrentIndex((previous) => Math.max(previous - 1, 0))}
